@@ -7,6 +7,7 @@ import { PollModule } from './poll/poll.module';
 import { PostModule } from './post/post.module';
 
 @Module({
+  // imports: [AuthModule, PollModule, PostModule],
   imports: [AuthModule, UserModule, PollModule, PostModule],
   controllers: [AppController],
   providers: [AppService],
