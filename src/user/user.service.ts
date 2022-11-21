@@ -133,22 +133,6 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     return this.update(authUser.userId, userUpdate);
   }
 
-  // Chua su dung, phuc vu cho cac service khac thoi
-  // async deleteUser(authUser: AuthUser, userId: string): Promise<any> {
-  //   const currentUser = await this.findSingleBy({ id: authUser.userId });
-
-  //   if (isEmpty(currentUser)) {
-  //     throw new UnauthorizedException('Token Invalid');
-  //   }
-
-  //   if (userId === authUser.userId) {
-  //     throw new UnauthorizedException(`You can not delete yourself.`);
-  //   }
-  //   await this.deleteById(userId);
-
-  //   return new BaseResponse(200, `Delete user with id ${userId} successfully.`);
-  // }
-
   async deleteUser(authUser: AuthUser, userId: string): Promise<any> {
     return this.verifyAndPerformAdminAction(authUser, async () => {
       // TODO: Duoc xoa tai khoan nguoi khac nhung co the xoa mat ca ban than lam he thong khong con admin

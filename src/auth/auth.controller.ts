@@ -23,26 +23,40 @@ import {
 @ApiTags('Auth Management')
 @Controller('auth')
 export class AuthController {
-  // constructor(private readonly authService: AuthService) {}
-  // @Post('verify')
-  // @ApiBearerAuth()
-  // verifyToken(
-  //   @Request() request: { user: AuthUser },
-  //   @Body() body: VerifyTokenBody,
-  // ): Promise<User> {
-  //   return this.authService.verifyToken(body, request.user);
-  // }
+  constructor(private readonly authService: AuthService) {}
+  @Post('verify')
+  @ApiBearerAuth()
+  verifyToken(
+    @Request() request: { user: AuthUser },
+    @Body() body: VerifyTokenBody,
+  ): Promise<User> {
+    return this.authService.verifyToken(body, request.user);
+  }
+  @Public()
+  @HttpCode(200)
+  @UseGuards(LocalAuthenticationGuard)
+  @Post('login')
+  async logIn(@Req() request: IRequestWithUser): Promise<ILoginResponse> {
+    return request.user as any;
+  }
+  @Public()
+  @HttpCode(200)
+  @Post('password/reset')
+  async resetPass(@Body() user: ResetPassRequest): Promise<ResetPassResponse> {
+    return this.authService.resetPassword(user);
+  }
+  @Public()
+  @HttpCode(200)
+  @Post('create-user')
+  async createUser(): Promise<any> {
+    return this.authService.createDefaultUser();
+  }
+
   // @Public()
   // @HttpCode(200)
   // @UseGuards(LocalAuthenticationGuard)
-  // @Post('login')
-  // async logIn(@Req() request: IRequestWithUser): Promise<ILoginResponse> {
+  // @Post('signup')
+  // async signUp(@Req() request: IRequestWithUser): Promise<ILoginResponse> {
   //   return request.user as any;
-  // }
-  // @Public()
-  // @HttpCode(200)
-  // @Post('password/reset')
-  // async resetPass(@Body() user: ResetPassRequest): Promise<ResetPassResponse> {
-  //   return this.authService.resetPassword(user);
   // }
 }
