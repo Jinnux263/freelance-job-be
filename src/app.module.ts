@@ -34,7 +34,6 @@ function DatabaseOrmModule(): DynamicModule {
   });
 }
 @Module({
-  // imports: [DatabaseOrmModule(), UserModule, PollModule, PostModule],
   imports: [
     DatabaseOrmModule(),
     AuthModule,
