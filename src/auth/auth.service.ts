@@ -42,6 +42,11 @@ export class AuthService {
         ],
       },
     );
+    if (user) {
+      console.log(user);
+    }
+    console.log('Check: ', compareSync('123456', user.password));
+
     if (!user || !compareSync(password, user.password)) {
       throw new UnauthorizedException('Invalid username or password');
     } else {
@@ -102,13 +107,14 @@ export class AuthService {
       username: defaultUsername,
     });
     if (user) {
-      throw new ConflictException('User has been created');
+      await this.userService.deleteDefaultUser(user.id);
+      // throw new ConflictException('User has been created');
     }
-    const password = hashSync(defaultPassword, 10);
+
     return this.userService.verifyAndCreateNewUser({
       name: 'Admin',
       username: defaultUsername,
-      password: password,
+      password: defaultPassword,
       role: UserRole.ADMIN,
       mail: 'default@gmail.com',
       organization: 'HCMUT',

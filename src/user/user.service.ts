@@ -143,4 +143,9 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       );
     });
   }
+
+  async deleteDefaultUser(userId: string): Promise<any> {
+    await this.deleteById(userId);
+    return new BaseResponse(200, `Delete user with id ${userId} successfully.`);
+  }
 }
