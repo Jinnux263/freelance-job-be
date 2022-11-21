@@ -1,3 +1,4 @@
+import { UserCreation } from './../user/user.dto';
 import { UserRole } from './../user/user.entity';
 import {
   Injectable,
@@ -99,25 +100,14 @@ export class AuthService {
       return this.userService.update(user.id, { password });
     });
   }
-  async createDefaultUser(): Promise<any> {
-    // Xac nhan thong tin can thiet o day, nhu ma OTP dien thoai de cho phep reset
-    const defaultUsername = 'admin';
-    const defaultPassword = '123456';
+  async signUp(newUser: UserCreation): Promise<any> {
     const user = await this.userService.findSingleBy({
-      username: defaultUsername,
+      username: newUser.username,
     });
     if (user) {
-      await this.userService.deleteDefaultUser(user.id);
-      // throw new ConflictException('User has been created');
+      throw new ConflictException('User has been created');
     }
 
-    return this.userService.verifyAndCreateNewUser({
-      name: 'Admin',
-      username: defaultUsername,
-      password: defaultPassword,
-      role: UserRole.ADMIN,
-      mail: 'default@gmail.com',
-      organization: 'HCMUT',
-    });
+    return this.userService.verifyAndCreateNewUser(newUser);
   }
 }

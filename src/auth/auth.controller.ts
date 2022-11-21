@@ -1,3 +1,4 @@
+import { UserCreation } from './../user/user.dto';
 import {
   Controller,
   Post,
@@ -45,18 +46,11 @@ export class AuthController {
   async resetPass(@Body() user: ResetPassRequest): Promise<ResetPassResponse> {
     return this.authService.resetPassword(user);
   }
+
   @Public()
   @HttpCode(200)
-  @Post('create-user')
-  async createUser(): Promise<any> {
-    return this.authService.createDefaultUser();
+  @Post('signup')
+  async signUp(@Body() user: UserCreation): Promise<any> {
+    return this.authService.signUp(user);
   }
-
-  // @Public()
-  // @HttpCode(200)
-  // @UseGuards(LocalAuthenticationGuard)
-  // @Post('signup')
-  // async signUp(@Req() request: IRequestWithUser): Promise<ILoginResponse> {
-  //   return request.user as any;
-  // }
 }
