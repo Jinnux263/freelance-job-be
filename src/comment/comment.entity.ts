@@ -1,27 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntityClass } from 'src/base/base.entity';
+import { UserPost } from 'src/post/post.entity';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class UserPost extends BaseEntityClass {
+export class Comment extends BaseEntityClass {
   @ApiProperty({
-    description: 'Post ID',
+    description: 'Comment ID',
     type: String,
   })
   @PrimaryColumn('varchar', { length: 41 })
   id: string;
 
   @ApiProperty({
-    description: 'Caption',
-    type: String,
+    description: 'Post',
+    type: UserPost,
   })
   @Column('varchar')
-  caption: string;
+  post: UserPost;
 
   @ApiProperty({
-    description: 'Post picture',
-    type: String,
+    description: 'Post',
+    type: UserPost,
   })
-  @Column('text', { nullable: true })
-  postpicture: string;
+  @Column('varchar')
+  reply: UserPost;
 }
