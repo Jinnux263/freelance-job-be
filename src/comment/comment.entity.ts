@@ -33,17 +33,17 @@ export class Comment extends BaseEntityClass {
   @ManyToOne((type) => UserPost, (post) => post.comment)
   post: UserPost;
 
-  @ApiProperty({
-    description: "Comment's Reply To",
-    type: Comment,
-  })
-  @ManyToOne((type) => Comment, (comment) => comment.replyComment)
-  replyToComment: Comment[];
+  // @ApiProperty({
+  //   description: "Comment's Reply To",
+  //   type: Comment,
+  // })
+  // @ManyToOne((type) => Comment, (comment) => comment.replyComment)
+  // replyToComment: Comment[];
 
-  @ApiProperty({
-    description: "Comment's Reply",
-    type: Comment,
-  })
-  @OneToMany((type) => Comment, (comment) => comment.replyToComment)
-  replyComment: Comment[];
+  // @ApiProperty({
+  //   description: "Comment's Reply",
+  //   type: Comment,
+  // })
+  // @OneToMany((type) => Comment, (comment) => comment.replyToComment)
+  // replyComment: Comment[];
 }

@@ -12,9 +12,7 @@ import { PostModule } from './post/post.module';
 import * as dotenv from 'dotenv';
 import { get } from 'lodash';
 import { CommentModule } from './comment/comment.module';
-import { LikeModule } from './like/like.module';
 import { Comment } from 'src/comment/comment.entity';
-import { Like } from 'src/like/like.entity';
 
 function DatabaseOrmModule(): DynamicModule {
   dotenv.config();
@@ -28,7 +26,7 @@ function DatabaseOrmModule(): DynamicModule {
     username: 'root',
     password: '',
     database: 'myfreelancedb',
-    entities: [User, UserPost, Poll, Like, Comment],
+    entities: [User, UserPost, Poll, Comment],
     synchronize: true,
     extra: {
       charset: 'utf8mb4_unicode_ci',
@@ -43,7 +41,6 @@ function DatabaseOrmModule(): DynamicModule {
     PollModule,
     PostModule,
     CommentModule,
-    LikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
