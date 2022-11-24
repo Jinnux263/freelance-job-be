@@ -73,7 +73,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     authUser: AuthUser,
     userId: string,
   ): Promise<Partial<User>> {
-    const currentUser = await this.findSingleBy({ id: authUser.userId });
+    const currentUser = await this.findSingleBy({ id: authUser.id });
     if (isEmpty(currentUser)) {
       throw new UnauthorizedException('Token Invalid');
     } else {
@@ -88,7 +88,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     authUser: AuthUser,
     action: () => Promise<T>,
   ): Promise<T> {
-    const currentUser = await this.findSingleBy({ id: authUser.userId });
+    const currentUser = await this.findSingleBy({ id: authUser.id });
     if (currentUser?.role === UserRole.ADMIN) {
       return action();
     } else {
@@ -104,7 +104,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     userId: string,
     userUpdate: UserUpdation,
   ): Promise<User> {
-    if (authUser.userId === userId) {
+    if (authUser.id === userId) {
       return this.updateSelfUserInfor(authUser, userUpdate);
     } else {
       const users = await this.verifyAndPerformAdminAction(
@@ -126,11 +126,11 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     authUser: AuthUser,
     userUpdate: UserSelfUpdation,
   ): Promise<User> {
-    const currentUser = await this.findSingleBy({ id: authUser.userId });
+    const currentUser = await this.findSingleBy({ id: authUser.id });
     if (isEmpty(currentUser)) {
       throw new UnauthorizedException('Token Invalid');
     }
-    return this.update(authUser.userId, userUpdate);
+    return this.update(authUser.id, userUpdate);
   }
 
   async deleteUser(authUser: AuthUser, userId: string): Promise<any> {

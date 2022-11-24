@@ -46,7 +46,7 @@ export class UserCreation {
   @ApiProperty({
     description: 'Role of User',
     enum: UserRole,
-    example: UserRole.GUEST,
+    example: UserRole.USER,
   })
   @IsNotEmpty()
   @IsEnum(UserRole)
@@ -89,7 +89,7 @@ export class UserUpdation {
   @ApiProperty({
     description: 'Role of User',
     enum: UserRole,
-    example: UserRole.GUEST,
+    example: UserRole.USER,
   })
   @IsEnum(UserRole)
   @IsOptional()

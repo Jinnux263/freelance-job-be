@@ -60,7 +60,7 @@ export class AuthService {
   }
   async verifyToken(body: VerifyTokenBody, authUser: AuthUser): Promise<User> {
     await validate(body);
-    const user = await this.userService.findSingleBy({ id: authUser.userId });
+    const user = await this.userService.findSingleBy({ id: authUser.id });
     if (user?.id !== body.userId) throw new InvalidToken();
     return user;
   }

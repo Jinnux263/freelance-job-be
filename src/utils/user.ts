@@ -2,10 +2,9 @@ import { User } from 'src/user/user.entity';
 
 export enum IdPrefix {
   USER = 'user',
-  REQUEST = 'request',
-  DATA_SOURCE = 'source',
-  DATA_CATEGORY = 'category',
-  SCHEMA = 'schema',
+  POST = 'post',
+  COMMENT = 'comment',
+  POLL = 'poll',
 }
 
 export function omitUserPassword(user: User): User {

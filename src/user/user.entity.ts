@@ -20,8 +20,7 @@ export enum DataType {
 
 export enum UserRole {
   ADMIN = 'ADMIN',
-  DATA_OWNER = 'DATA_OWNER',
-  GUEST = 'GUEST',
+  USER = 'USER',
 }
 
 @Entity()
@@ -64,7 +63,7 @@ export class User extends BaseEntityClass {
   @ApiProperty({
     description: 'User Role',
     enum: UserRole,
-    example: UserRole.GUEST,
+    example: UserRole.USER,
   })
   @Column('text')
   role: UserRole;

@@ -42,4 +42,9 @@ export class UserPost extends BaseEntityClass {
 
   @ManyToMany((type) => User, (user) => user.likedPosts)
   likeUser: UserPost[];
+
+  constructor(init: Partial<UserPost>) {
+    super();
+    return Object.assign(this, init);
+  }
 }
