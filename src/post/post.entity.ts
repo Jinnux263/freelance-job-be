@@ -11,6 +11,11 @@ import {
   ManyToMany,
 } from 'typeorm';
 
+export enum PostType {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+}
+
 @Entity()
 export class UserPost extends BaseEntityClass {
   @ApiProperty({
@@ -34,13 +39,26 @@ export class UserPost extends BaseEntityClass {
   @Column('text', { nullable: true })
   postpicture: string;
 
-  @ManyToOne((type) => User, (user) => user.createdPosts)
+  @ApiProperty({
+    description: 'Post picture',
+    enum: PostType,
+  })
+  @Column('text')
+  type: PostType;
+
+  @ManyToOne((type) => User, (user) => user.createdPosts, {
+    onDelete: 'CASCADE',
+  })
   owner: User;
 
-  @OneToMany((type) => Comment, (comment) => comment.post)
+  @OneToMany((type) => Comment, (comment) => comment.post, {
+    onDelete: 'CASCADE',
+  })
   comment: Comment[];
 
-  @ManyToMany((type) => User, (user) => user.likedPosts)
+  @ManyToMany((type) => User, (user) => user.likedPosts, {
+    onDelete: 'CASCADE',
+  })
   likeUser: UserPost[];
 
   constructor(init: Partial<UserPost>) {

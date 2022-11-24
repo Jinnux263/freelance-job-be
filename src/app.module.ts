@@ -13,6 +13,7 @@ import * as dotenv from 'dotenv';
 import { get } from 'lodash';
 import { CommentModule } from './comment/comment.module';
 import { Comment } from 'src/comment/comment.entity';
+import { LikeModule } from './like/like.module';
 
 function DatabaseOrmModule(): DynamicModule {
   dotenv.config();
@@ -41,6 +42,7 @@ function DatabaseOrmModule(): DynamicModule {
     PollModule,
     PostModule,
     CommentModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

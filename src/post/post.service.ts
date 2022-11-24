@@ -1,10 +1,14 @@
 import { AuthUser } from 'src/auth/auth-user.decorator';
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { BaseService } from 'src/base/base.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IdPrefix } from 'src/utils';
-import { UserPost } from 'src/post/post.entity';
+import { PostType, UserPost } from 'src/post/post.entity';
 import { PostCreation, PostRequest } from 'src/post/post.dto';
 import { UserService } from 'src/user/user.service';
 
@@ -27,18 +31,20 @@ export class PostService extends BaseService<
   ): Promise<any> {
     try {
       const user = await this.userService.findSingleBy({ id: authUser.id });
-      // console.log(user);
-
-      const newPost = new UserPost({ ...postCreation, owner: user });
+      const newPost = new UserPost({
+        type: PostType.PUBLIC,
+        ...postCreation,
+        owner: user,
+      });
       newPost.owner = user;
-      console.log(newPost);
 
       const createdUser = await this.create(newPost);
       return createdUser;
     } catch (err) {
-      throw new ConflictException('Username Already Exist');
+      throw new InternalServerErrorException('Can not create new Post');
     }
   }
+
   async getPostById(authUser: AuthUser, id: string): Promise<any> {
     return 'OK';
   }
