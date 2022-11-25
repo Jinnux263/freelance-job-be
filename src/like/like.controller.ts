@@ -1,40 +1,23 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Request,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, Request } from '@nestjs/common';
 import { LikeService } from './like.service';
-import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Like } from 'src/like/entities/like.entity';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserPost } from 'src/post/post.entity';
+import { PostService } from 'src/post/post.service';
 
 @Controller('like')
 export class LikeController {
-  constructor(private readonly likeService: LikeService) {}
+  constructor(
+    private readonly likeService: LikeService,
+    private readonly postService: PostService,
+  ) {}
 
   @Post(':postId')
-  @ApiTags('Admin Only')
-  @ApiCreatedResponse({
-    description: 'A new post has been created',
-    type: Like,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Current post is not an admin',
-  })
-  @ApiBearerAuth()
   like(
     @Request() request: { user: AuthUser },
     @Param('postId') postId: string,
@@ -44,20 +27,16 @@ export class LikeController {
   }
 
   @Delete(':postId')
-  @ApiTags('Admin Only')
-  @ApiCreatedResponse({
-    description: 'Post has been unliked',
-    type: Like,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Current post is not an admin',
-  })
-  @ApiBearerAuth()
   unlikePost(
     @Request() request: { user: AuthUser },
     @Param('postId') postId: string,
   ): Promise<any> {
     const like = this.likeService.unlike(request.user.id, postId);
     return like;
+  }
+
+  @Get('/:id')
+  getLikeOfPost(@Param('id') id: string): Promise<UserPost> {
+    return this.postService.getLikesOfPost(id);
   }
 }

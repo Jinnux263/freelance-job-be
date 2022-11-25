@@ -145,7 +145,29 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     });
   }
 
-  // async findUsersLikePost(post : UserPost) : Promise<any>{
-  //   return this.userRepository.find({likedPosts: post})
-  // }
+  async getLikedPosts(authUser: AuthUser): Promise<UserPost[]> {
+    const posts = await this.userRepository.findOne({
+      where: {
+        id: authUser.id,
+      },
+      relations: {
+        likedPosts: true,
+      },
+    });
+
+    return posts.likedPosts;
+  }
+
+  async getPostsOfUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        createdPosts: true,
+      },
+    });
+
+    return user;
+  }
 }

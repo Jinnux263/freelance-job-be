@@ -1,14 +1,13 @@
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import {
   Injectable,
-  ConflictException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { BaseService } from 'src/base/base.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { generateUUID, IdPrefix } from 'src/utils';
+import { IdPrefix } from 'src/utils';
 import { PostType, UserPost } from 'src/post/post.entity';
 import { PostCreation, PostRequest, PostUpdation } from 'src/post/post.dto';
 import { UserService } from 'src/user/user.service';
@@ -59,15 +58,31 @@ export class PostService extends BaseService<
     return posts;
   }
 
-  // async getPostsOfUser(
-  //   authUser: AuthUser,
-  //   userId: string,
-  // ): Promise<UserPost[]> {
-  //   const user = await this.userService.findById(userId);
-  //   const posts = await this.findAll();
+  async getLikesOfPost(postId: string): Promise<UserPost> {
+    const post = await this.postRepository.findOne({
+      where: {
+        id: postId,
+      },
+      relations: {
+        likeUser: true,
+      },
+    });
 
-  //   return posts;
-  // }
+    return post;
+  }
+
+  async getCommentsInPost(postId: string): Promise<UserPost> {
+    const post = await this.postRepository.findOne({
+      where: {
+        id: postId,
+      },
+      relations: {
+        comment: true,
+      },
+    });
+
+    return post;
+  }
 
   async updatePost(
     authUser: AuthUser,
@@ -117,11 +132,14 @@ export class PostService extends BaseService<
 
   async unlikePost(userId: string, postId: string): Promise<any> {
     try {
-      const post = await this.findById(postId);
-      const user = await this.userService.findById(userId);
+      const post = await this.findById(postId, {
+        relations: ['likeUser'],
+      });
       try {
         // post.addLikeUser(user);
-        post.likeUser = [];
+        post.likeUser.filter((user) => {
+          return userId != user.id;
+        });
         return await this.postRepository.save(post);
       } catch (err) {
         throw new NotFoundException('There is no such post');

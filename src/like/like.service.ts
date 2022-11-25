@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthUser } from 'src/auth/auth-user.decorator';
 import { PostService } from 'src/post/post.service';
-import { UserService } from 'src/user/user.service';
-import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
-
 @Injectable()
 export class LikeService {
   constructor(private readonly postService: PostService) {}

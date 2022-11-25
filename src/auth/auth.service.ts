@@ -43,11 +43,6 @@ export class AuthService {
         ],
       },
     );
-    if (user) {
-      console.log(user);
-    }
-    console.log('Check: ', compareSync('123456', user.password));
-
     if (!user || !compareSync(password, user.password)) {
       throw new UnauthorizedException('Invalid username or password');
     } else {

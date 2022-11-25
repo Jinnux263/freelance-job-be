@@ -21,22 +21,18 @@ import {
 } from '@nestjs/swagger';
 import { BaseResponse } from 'src/base/base.dto';
 import { PostCreation, PostUpdation } from 'src/post/post.dto';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/user.entity';
 
 @Controller('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('')
-  @ApiTags('Admin Only')
-  @ApiCreatedResponse({
-    description: 'A new post has been created',
-    type: UserPost,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Current post is not an admin',
-  })
-  @ApiBearerAuth()
-  createUser(
+  createPost(
     @Request() request: { user: AuthUser },
     @Body() body: PostCreation,
   ): Promise<UserPost> {
@@ -44,38 +40,30 @@ export class PostController {
   }
 
   @Get(':id')
-  getUser(
+  getPost(
     @Param('id') id: string,
     @Request() request: { user: AuthUser },
   ): Promise<Partial<UserPost>> {
     return this.postService.getPostById(request.user, id);
   }
 
+  @Get('user/:id')
+  getPostsOfUser(@Param('id') id: string): Promise<User> {
+    return this.userService.getPostsOfUser(id);
+  }
+
+  @Get('liked-posts/all')
+  getLikedPosts(@Request() request: { user: AuthUser }): Promise<UserPost[]> {
+    return this.userService.getLikedPosts(request.user);
+  }
+
   @Get('')
-  @ApiTags('Admin Only')
-  @ApiOkResponse({
-    description: 'List of all users',
-    type: UserPost,
-    isArray: true,
-  })
-  @ApiBearerAuth()
-  @ApiUnauthorizedResponse({
-    description: 'Current post is not an admin',
-  })
-  getUsers(@Request() request: { user: AuthUser }): Promise<UserPost[]> {
+  getPosts(@Request() request: { user: AuthUser }): Promise<UserPost[]> {
     return this.postService.getPosts(request.user);
   }
 
   @Patch(':id')
-  @ApiAcceptedResponse({
-    description: `Post has been successfully updated`,
-    type: PostUpdation,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Current post is not an admin',
-  })
-  @ApiBearerAuth()
-  updateUser(
+  updatePost(
     @Request() request: { user: AuthUser },
     @Param('id') id: string,
     @Body() body: PostUpdation,
@@ -84,16 +72,7 @@ export class PostController {
   }
 
   @Delete(':id')
-  @ApiTags('Admin Only')
-  @ApiAcceptedResponse({
-    description: `Post has been delete successfully`,
-    type: BaseResponse,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Current post is not an admin',
-  })
-  @ApiBearerAuth()
-  removeUser(@Request() request: { user: AuthUser }, @Param('id') id: string) {
+  removePost(@Request() request: { user: AuthUser }, @Param('id') id: string) {
     return this.postService.deletePost(request.user, id);
   }
 }
