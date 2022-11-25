@@ -98,4 +98,36 @@ export class PostService extends BaseService<
       throw new InternalServerErrorException('Internal Error');
     }
   }
+
+  async likePost(userId: string, postId: string): Promise<UserPost> {
+    try {
+      const user = await this.userService.findSingleBy({ id: userId });
+      try {
+        const post = await this.findById(postId);
+        post.addLikeUser(user);
+
+        return await this.postRepository.save(post);
+      } catch (err) {
+        throw new NotFoundException('There is no such post');
+      }
+    } catch (err) {
+      throw new InternalServerErrorException('Can not like post');
+    }
+  }
+
+  async unlikePost(userId: string, postId: string): Promise<any> {
+    try {
+      const post = await this.findById(postId);
+      const user = await this.userService.findById(userId);
+      try {
+        // post.addLikeUser(user);
+        post.likeUser = [];
+        return await this.postRepository.save(post);
+      } catch (err) {
+        throw new NotFoundException('There is no such post');
+      }
+    } catch (err) {
+      throw new InternalServerErrorException('Can not unlike post');
+    }
+  }
 }

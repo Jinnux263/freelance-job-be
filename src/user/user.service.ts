@@ -19,6 +19,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { isEmpty, pick } from 'lodash';
 import { hashSync } from 'bcrypt';
 import { BaseResponse } from 'src/base/base.dto';
+import { UserPost } from 'src/post/post.entity';
 
 @Injectable()
 export class UserService extends BaseService<User, UserCreation, UserRequest> {
@@ -144,8 +145,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     });
   }
 
-  async deleteDefaultUser(userId: string): Promise<any> {
-    await this.deleteById(userId);
-    return new BaseResponse(200, `Delete user with id ${userId} successfully.`);
-  }
+  // async findUsersLikePost(post : UserPost) : Promise<any>{
+  //   return this.userRepository.find({likedPosts: post})
+  // }
 }
