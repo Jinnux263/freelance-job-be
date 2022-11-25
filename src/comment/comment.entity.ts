@@ -31,7 +31,7 @@ export class Comment extends BaseEntityClass {
     type: UserPost,
   })
   @ManyToOne((type) => UserPost, (post) => post.comment, {
-    onDelete: 'CASCADE',
+    cascade: true,
   })
   post: UserPost;
 

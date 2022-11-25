@@ -3,14 +3,16 @@ import {
   Injectable,
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { BaseService } from 'src/base/base.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IdPrefix } from 'src/utils';
+import { generateUUID, IdPrefix } from 'src/utils';
 import { PostType, UserPost } from 'src/post/post.entity';
-import { PostCreation, PostRequest } from 'src/post/post.dto';
+import { PostCreation, PostRequest, PostUpdation } from 'src/post/post.dto';
 import { UserService } from 'src/user/user.service';
+import { BaseResponse } from 'src/base/base.dto';
 
 @Injectable()
 export class PostService extends BaseService<
@@ -28,7 +30,7 @@ export class PostService extends BaseService<
   async createPost(
     authUser: AuthUser,
     postCreation: PostCreation,
-  ): Promise<any> {
+  ): Promise<UserPost> {
     try {
       const user = await this.userService.findSingleBy({ id: authUser.id });
       const newPost = new UserPost({
@@ -36,28 +38,64 @@ export class PostService extends BaseService<
         ...postCreation,
         owner: user,
       });
-      newPost.owner = user;
+      const createdPost = await this.create(newPost);
 
-      const createdUser = await this.create(newPost);
-      return createdUser;
+      return createdPost;
     } catch (err) {
       throw new InternalServerErrorException('Can not create new Post');
     }
   }
 
-  async getPostById(authUser: AuthUser, id: string): Promise<any> {
-    return 'OK';
+  async getPostById(authUser: AuthUser, id: string): Promise<UserPost> {
+    const post = await this.findById(id);
+    if (!post) {
+      throw new NotFoundException('Could not find post');
+    }
+    return post;
   }
-  async getPosts(authUser: AuthUser): Promise<any> {
-    return 'OK';
+
+  async getPosts(authUser: AuthUser): Promise<UserPost[]> {
+    const posts = await this.findAll();
+    return posts;
   }
-  async getPostOfUser(authUser: AuthUser, userId: string): Promise<any> {
-    return 'OK';
+
+  // async getPostsOfUser(
+  //   authUser: AuthUser,
+  //   userId: string,
+  // ): Promise<UserPost[]> {
+  //   const user = await this.userService.findById(userId);
+  //   const posts = await this.findAll();
+
+  //   return posts;
+  // }
+
+  async updatePost(
+    authUser: AuthUser,
+    id: string,
+    updatePost: PostUpdation,
+  ): Promise<UserPost> {
+    try {
+      const post = await this.findById(id);
+      if (!post) {
+        throw new NotFoundException('There is no post');
+      }
+      const newPost = await this.update(id, updatePost);
+      return newPost;
+    } catch (err) {
+      throw new InternalServerErrorException('Internal Error');
+    }
   }
-  async updatePost(authUser: AuthUser, id: string, body: any): Promise<any> {
-    return 'OK';
-  }
-  async deletePost(authUser: AuthUser, id: string): Promise<any> {
-    return 'OK';
+
+  async deletePost(authUser: AuthUser, id: string): Promise<BaseResponse> {
+    try {
+      const post = await this.findById(id);
+      if (!post) {
+        throw new NotFoundException('Can not delete post');
+      }
+      await this.deleteById(id);
+      return new BaseResponse(200, 'Delete post successfully');
+    } catch (err) {
+      throw new InternalServerErrorException('Internal Error');
+    }
   }
 }

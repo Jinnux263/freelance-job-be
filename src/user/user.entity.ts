@@ -88,6 +88,5 @@ export class User extends BaseEntityClass {
   createdPosts: UserPost[];
 
   @ManyToMany((type) => UserPost, (post) => post.likeUser)
-  @JoinTable()
   likedPosts: UserPost[];
 }

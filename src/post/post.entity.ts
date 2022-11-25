@@ -9,6 +9,7 @@ import {
   OneToMany,
   ManyToOne,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 export enum PostType {
@@ -47,19 +48,32 @@ export class UserPost extends BaseEntityClass {
   type: PostType;
 
   @ManyToOne((type) => User, (user) => user.createdPosts, {
-    onDelete: 'CASCADE',
+    cascade: true,
   })
   owner: User;
 
-  @OneToMany((type) => Comment, (comment) => comment.post, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany((type) => Comment, (comment) => comment.post)
   comment: Comment[];
 
   @ManyToMany((type) => User, (user) => user.likedPosts, {
-    onDelete: 'CASCADE',
+    cascade: true,
   })
-  likeUser: UserPost[];
+  @JoinTable()
+  likeUser: User[];
+
+  addLikeUser(user: User) {
+    if (this.likeUser == null) {
+      this.likeUser = new Array<User>();
+    }
+    this.likeUser.push(user);
+  }
+
+  addComment(comment: Comment) {
+    if (this.comment == null) {
+      this.comment = new Array<Comment>();
+    }
+    this.comment.push(comment);
+  }
 
   constructor(init: Partial<UserPost>) {
     super();
