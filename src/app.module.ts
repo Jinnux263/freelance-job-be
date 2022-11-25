@@ -11,9 +11,9 @@ import { PollModule } from './poll/poll.module';
 import { PostModule } from './post/post.module';
 import * as dotenv from 'dotenv';
 import { get } from 'lodash';
-import { CommentModule } from './comment/comment.module';
-import { Comment } from 'src/comment/comment.entity';
 import { LikeModule } from './like/like.module';
+import { CommentModule } from './comment/comment.module';
+import { Comment } from 'src/comment/entities/comment.entity';
 
 function DatabaseOrmModule(): DynamicModule {
   dotenv.config();
