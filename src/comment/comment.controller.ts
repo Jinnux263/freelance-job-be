@@ -19,14 +19,22 @@ export class CommentController {
     private readonly postService: PostService,
   ) {}
 
-  @Post()
-  makeComment(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create(createCommentDto);
+  @Post('post/:id')
+  makeComment(
+    @Param('id') id: string,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    return this.commentService.createComment(id, createCommentDto);
   }
 
   @Get('post/:id')
   getCommentsInPost(@Param('id') id: string) {
     return this.postService.getCommentsInPost(id);
+  }
+
+  @Get('reply/:id')
+  getReplyComment(@Param('id') id: string) {
+    return this.commentService.getReplyComment(id);
   }
 
   @Patch(':id')

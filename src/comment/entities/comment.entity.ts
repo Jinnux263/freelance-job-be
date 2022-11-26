@@ -23,7 +23,7 @@ export class Comment extends BaseEntityClass {
     description: 'Comment',
     type: String,
   })
-  @PrimaryColumn('varchar')
+  @Column('varchar')
   comment: string;
 
   @ApiProperty({
@@ -35,17 +35,22 @@ export class Comment extends BaseEntityClass {
   })
   post: UserPost;
 
-  // @ApiProperty({
-  //   description: "Comment's Reply To",
-  //   type: Comment,
-  // })
-  // @ManyToOne((type) => Comment, (comment) => comment.replyComment)
-  // replyToComment: Comment[];
+  @ApiProperty({
+    description: "Comment's Reply To",
+    type: Comment,
+  })
+  @ManyToOne((type) => Comment, (comment) => comment.replyComment)
+  replyToComment: Comment;
 
-  // @ApiProperty({
-  //   description: "Comment's Reply",
-  //   type: Comment,
-  // })
-  // @OneToMany((type) => Comment, (comment) => comment.replyToComment)
-  // replyComment: Comment[];
+  @ApiProperty({
+    description: "Comment's Reply",
+    type: Comment,
+  })
+  @OneToMany((type) => Comment, (comment) => comment.replyToComment)
+  replyComment: Comment[];
+
+  constructor(init: Partial<Comment>) {
+    super();
+    return Object.assign(this, init);
+  }
 }
