@@ -10,6 +10,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserPost } from 'src/post/post.entity';
 import { PostService } from 'src/post/post.service';
 
+@ApiTags('Like Post API')
 @Controller('like')
 export class LikeController {
   constructor(

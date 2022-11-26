@@ -11,19 +11,12 @@ import {
   Post,
   Request,
 } from '@nestjs/common';
-import {
-  ApiAcceptedResponse,
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { BaseResponse } from 'src/base/base.dto';
 import { PostCreation, PostUpdation } from 'src/post/post.dto';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Post API')
 @Controller('post')
 export class PostController {
   constructor(
