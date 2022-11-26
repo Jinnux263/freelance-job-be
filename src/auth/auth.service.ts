@@ -43,11 +43,6 @@ export class AuthService {
         ],
       },
     );
-    if (user) {
-      console.log(user);
-    }
-    console.log('Check: ', compareSync('123456', user.password));
-
     if (!user || !compareSync(password, user.password)) {
       throw new UnauthorizedException('Invalid username or password');
     } else {
@@ -60,7 +55,7 @@ export class AuthService {
   }
   async verifyToken(body: VerifyTokenBody, authUser: AuthUser): Promise<User> {
     await validate(body);
-    const user = await this.userService.findSingleBy({ id: authUser.userId });
+    const user = await this.userService.findSingleBy({ id: authUser.id });
     if (user?.id !== body.userId) throw new InvalidToken();
     return user;
   }

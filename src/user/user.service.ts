@@ -19,6 +19,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { isEmpty, pick } from 'lodash';
 import { hashSync } from 'bcrypt';
 import { BaseResponse } from 'src/base/base.dto';
+import { UserPost } from 'src/post/post.entity';
 
 @Injectable()
 export class UserService extends BaseService<User, UserCreation, UserRequest> {
@@ -73,7 +74,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     authUser: AuthUser,
     userId: string,
   ): Promise<Partial<User>> {
-    const currentUser = await this.findSingleBy({ id: authUser.userId });
+    const currentUser = await this.findSingleBy({ id: authUser.id });
     if (isEmpty(currentUser)) {
       throw new UnauthorizedException('Token Invalid');
     } else {
@@ -88,7 +89,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     authUser: AuthUser,
     action: () => Promise<T>,
   ): Promise<T> {
-    const currentUser = await this.findSingleBy({ id: authUser.userId });
+    const currentUser = await this.findSingleBy({ id: authUser.id });
     if (currentUser?.role === UserRole.ADMIN) {
       return action();
     } else {
@@ -104,7 +105,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     userId: string,
     userUpdate: UserUpdation,
   ): Promise<User> {
-    if (authUser.userId === userId) {
+    if (authUser.id === userId) {
       return this.updateSelfUserInfor(authUser, userUpdate);
     } else {
       const users = await this.verifyAndPerformAdminAction(
@@ -126,11 +127,11 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     authUser: AuthUser,
     userUpdate: UserSelfUpdation,
   ): Promise<User> {
-    const currentUser = await this.findSingleBy({ id: authUser.userId });
+    const currentUser = await this.findSingleBy({ id: authUser.id });
     if (isEmpty(currentUser)) {
       throw new UnauthorizedException('Token Invalid');
     }
-    return this.update(authUser.userId, userUpdate);
+    return this.update(authUser.id, userUpdate);
   }
 
   async deleteUser(authUser: AuthUser, userId: string): Promise<any> {
@@ -144,8 +145,29 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     });
   }
 
-  async deleteDefaultUser(userId: string): Promise<any> {
-    await this.deleteById(userId);
-    return new BaseResponse(200, `Delete user with id ${userId} successfully.`);
+  async getLikedPosts(authUser: AuthUser): Promise<UserPost[]> {
+    const posts = await this.userRepository.findOne({
+      where: {
+        id: authUser.id,
+      },
+      relations: {
+        likedPosts: true,
+      },
+    });
+
+    return posts.likedPosts;
+  }
+
+  async getPostsOfUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        createdPosts: true,
+      },
+    });
+
+    return user;
   }
 }

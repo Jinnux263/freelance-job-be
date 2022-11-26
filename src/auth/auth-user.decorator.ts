@@ -17,7 +17,7 @@ export const Authorization = createParamDecorator((_, context: any) => {
 });
 
 export interface AuthUser {
-  userId: string;
+  id: string;
 }
 
 export const IS_PUBLIC_KEY = 'isPublic';
