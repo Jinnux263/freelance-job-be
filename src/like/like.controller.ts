@@ -6,7 +6,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthUser } from 'src/auth/auth-user.decorator';
+import { AuthUser, Public } from 'src/auth/auth-user.decorator';
 import { UserPost } from 'src/post/post.entity';
 import { PostService } from 'src/post/post.service';
 
@@ -37,6 +37,7 @@ export class LikeController {
   }
 
   @Get('/:id')
+  @Public()
   getLikeOfPost(@Param('id') id: string): Promise<UserPost> {
     return this.postService.getLikesOfPost(id);
   }

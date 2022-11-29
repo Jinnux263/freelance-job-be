@@ -8,6 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/auth/auth-user.decorator';
 import { PostService } from 'src/post/post.service';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -30,11 +31,13 @@ export class CommentController {
   }
 
   @Get('post/:id')
+  @Public()
   getCommentsInPost(@Param('id') id: string) {
     return this.postService.getCommentsInPost(id);
   }
 
   @Get('reply/:id')
+  @Public()
   getReplyComment(@Param('id') id: string) {
     return this.commentService.getReplyComment(id);
   }
