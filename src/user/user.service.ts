@@ -39,18 +39,18 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     );
   }
 
-  async createAdminUser(
-    secretCode: string,
-    newUser: UserCreation,
-  ): Promise<User> {
-    // TODO: Move to env
-    if (secretCode === ADMIN_SECRET) {
-      newUser.role = UserRole.ADMIN;
-      return this.verifyAndCreateNewUser(newUser);
-    } else {
-      throw new UnauthorizedException('Wrong Secret Code');
-    }
-  }
+  // async createAdminUser(
+  //   secretCode: string,
+  //   newUser: UserCreation,
+  // ): Promise<User> {
+  //   // TODO: Move to env
+  //   if (secretCode === ADMIN_SECRET) {
+  //     newUser.role = UserRole.ADMIN;
+  //     return this.verifyAndCreateNewUser(newUser);
+  //   } else {
+  //     throw new UnauthorizedException('Wrong Secret Code');
+  //   }
+  // }
 
   async verifyAndCreateNewUser(newUser: UserCreation): Promise<User> {
     const existedUser = await this.findSingleBy({ username: newUser.username });

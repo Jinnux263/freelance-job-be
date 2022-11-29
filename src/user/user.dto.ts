@@ -43,14 +43,14 @@ export class UserCreation {
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty({
-    description: 'Role of User',
-    enum: UserRole,
-    example: UserRole.USER,
-  })
-  @IsNotEmpty()
-  @IsEnum(UserRole)
-  role: UserRole;
+  // @ApiProperty({
+  //   description: 'Role of User',
+  //   enum: UserRole,
+  //   example: UserRole.USER,
+  // })
+  // @IsNotEmpty()
+  // @IsEnum(UserRole)
+  // role: UserRole;
 
   @ApiProperty({
     description: 'User Email',

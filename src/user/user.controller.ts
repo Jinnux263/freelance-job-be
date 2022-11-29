@@ -70,15 +70,15 @@ export class UserController {
     return this.userService.createNewUser(request.user, body);
   }
 
-  @Post('admin')
-  @ApiExcludeEndpoint()
-  @Public()
-  createAdminUser(
-    @Headers() headers: Record<string, string>,
-    @Body() body: UserCreation,
-  ): Promise<User> {
-    return this.userService.createAdminUser(headers['secret'], body);
-  }
+  // @Post('admin')
+  // @ApiExcludeEndpoint()
+  // @Public()
+  // createAdminUser(
+  //   @Headers() headers: Record<string, string>,
+  //   @Body() body: UserCreation,
+  // ): Promise<User> {
+  //   return this.userService.createAdminUser(headers['secret'], body);
+  // }
 
   @Patch(':id')
   @ApiAcceptedResponse({
