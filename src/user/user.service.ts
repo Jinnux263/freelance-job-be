@@ -99,7 +99,6 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     }
   }
 
-  // userUpdate need to be an class smaller than User (can not change fixed information)
   async updateUserInfor(
     authUser: AuthUser,
     userId: string,

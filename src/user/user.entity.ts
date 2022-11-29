@@ -10,13 +10,6 @@ import {
   JoinTable,
 } from 'typeorm';
 
-export enum DataType {
-  ENVIRONMENT = 'ENVIRONMENT',
-  EDUCATION = 'EDUCATION',
-  MEDICAL = 'MEDICAL',
-  TRAFFIC = 'TRAFFIC',
-}
-
 export enum UserRole {
   ADMIN = 'ADMIN',
   USER = 'USER',
