@@ -41,9 +41,9 @@ export class PostController {
     return this.postService.getPostById(request.user, id);
   }
 
-  @Get('user/:id')
+  @Get('user/:userId')
   @Public()
-  getPostsOfUser(@Param('id') id: string): Promise<User> {
+  getPostsOfUser(@Param('userId') id: string): Promise<User> {
     return this.userService.getPostsOfUser(id);
   }
 

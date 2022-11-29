@@ -10,15 +10,15 @@ import { AuthUser, Public } from 'src/auth/auth-user.decorator';
 import { UserPost } from 'src/post/post.entity';
 import { PostService } from 'src/post/post.service';
 
-@ApiTags('Like Post API')
-@Controller('like')
+@ApiTags('Post API')
+@Controller('post')
 export class LikeController {
   constructor(
     private readonly likeService: LikeService,
     private readonly postService: PostService,
   ) {}
 
-  @Post(':postId')
+  @Post(':postId/like')
   like(
     @Request() request: { user: AuthUser },
     @Param('postId') postId: string,
@@ -27,7 +27,7 @@ export class LikeController {
     return like;
   }
 
-  @Delete(':postId')
+  @Delete(':postId/unlike')
   unlikePost(
     @Request() request: { user: AuthUser },
     @Param('postId') postId: string,
@@ -36,9 +36,9 @@ export class LikeController {
     return like;
   }
 
-  @Get('/:id')
+  @Get(':postId/like')
   @Public()
-  getLikeOfPost(@Param('id') id: string): Promise<UserPost> {
-    return this.postService.getLikesOfPost(id);
+  getLikeOfPost(@Param('postId') postId: string): Promise<UserPost> {
+    return this.postService.getLikesOfPost(postId);
   }
 }

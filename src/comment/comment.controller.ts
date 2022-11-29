@@ -14,44 +14,44 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 
-@ApiTags('Comment API')
-@Controller('comment')
+@ApiTags('Post API')
+@Controller('post')
 export class CommentController {
   constructor(
     private readonly commentService: CommentService,
     private readonly postService: PostService,
   ) {}
 
-  @Post('post/:id')
+  @Post(':postId/comment')
   makeComment(
-    @Param('id') id: string,
+    @Param('postId') id: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     return this.commentService.createComment(id, createCommentDto);
   }
 
-  @Get('post/:id')
+  @Get(':postId/comment')
   @Public()
-  getCommentsInPost(@Param('id') id: string) {
+  getCommentsInPost(@Param('postId') id: string) {
     return this.postService.getCommentsInPost(id);
   }
 
-  @Get(':id/reply')
+  @Get('comment/:commentId/reply')
   @Public()
-  getReplyComment(@Param('id') id: string) {
+  getReplyComment(@Param('commentId') id: string) {
     return this.commentService.getReplyComment(id);
   }
 
-  @Patch(':id')
+  @Patch('comment/:commentId')
   modifyComment(
-    @Param('id') id: string,
+    @Param('commentId') id: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
     return this.commentService.updateComment(id, updateCommentDto);
   }
 
-  @Delete(':id')
-  removeComment(@Param('id') id: string) {
+  @Delete('comment/:commentId')
+  removeComment(@Param('commentId') id: string) {
     return this.commentService.removeComment(id);
   }
 }
