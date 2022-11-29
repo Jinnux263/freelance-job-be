@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   ConflictException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InvalidToken } from './auth.entity';
 import { VerifyTokenBody } from './auth.request';
@@ -67,15 +68,18 @@ export class AuthService {
   async resetPassword(
     resquestUser: ResetPassRequest,
   ): Promise<ResetPassResponse> {
-    // Xac nhan thong tin can thiet o day, nhu ma OTP dien thoai de cho phep reset
-    const user = await this.userService.findSingleBy({
-      username: resquestUser.username,
-    });
-    if (!user) {
-      throw new NotFoundException('There is no user with the given username.');
+    try {
+      const user = await this.userService.findSingleBy({
+        username: resquestUser.username,
+      });
+      if (!user || user.email !== resquestUser.email) {
+        throw new NotFoundException('Invalid user information!');
+      }
+      const password = hashSync(resquestUser.password, 10);
+      return this.userService.update(user.id, { password });
+    } catch (err) {
+      throw new InternalServerErrorException('Internal Error.');
     }
-    const password = hashSync(resquestUser.password, 10);
-    return this.userService.update(user.id, { password });
   }
   async resetPasswordAdminRight(
     authUser: AuthUser,

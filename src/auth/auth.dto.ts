@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Request } from 'express';
 import { User } from 'src/user/user.entity';
 import { SAMPLE_TOKEN } from 'src/utils';
@@ -42,6 +42,15 @@ export class ResetPassRequest {
   })
   @IsNotEmpty()
   username: string;
+
+  @ApiProperty({
+    description: 'Email',
+    type: String,
+    example: 'abc@gmail.com',
+  })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
   // Can validate mat khau truoc khi luu nua
   @ApiProperty({

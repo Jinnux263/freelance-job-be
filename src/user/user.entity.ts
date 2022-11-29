@@ -18,7 +18,7 @@ export enum DataType {
 }
 
 export enum UserRole {
-  ADMIN = 'ADMIN',
+  // ADMIN = 'ADMIN',
   USER = 'USER',
 }
 
