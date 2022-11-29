@@ -47,12 +47,6 @@ export class PostController {
     return this.userService.getPostsOfUser(id);
   }
 
-  // Todo: Chuyen qua ben user
-  @Get('liked-posts/all')
-  getLikedPosts(@Request() request: { user: AuthUser }): Promise<UserPost[]> {
-    return this.userService.getLikedPosts(request.user);
-  }
-
   @Get('')
   @Public()
   getPosts(@Request() request: { user: AuthUser }): Promise<UserPost[]> {

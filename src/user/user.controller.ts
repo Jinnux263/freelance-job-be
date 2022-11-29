@@ -23,9 +23,10 @@ import {
 } from '@nestjs/swagger';
 import { AuthUser, Public } from 'src/auth/auth-user.decorator';
 import { BaseResponse } from 'src/base/base.dto';
+import { UserPost } from 'src/post/post.entity';
 
 @ApiTags('Users Management')
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -108,5 +109,10 @@ export class UserController {
   @ApiBearerAuth()
   removeUser(@Request() request: { user: AuthUser }, @Param('id') id: string) {
     return this.userService.deleteUser(request.user, id);
+  }
+
+  @Get('liked-posts/all')
+  getLikedPosts(@Request() request: { user: AuthUser }): Promise<UserPost[]> {
+    return this.userService.getLikedPosts(request.user);
   }
 }

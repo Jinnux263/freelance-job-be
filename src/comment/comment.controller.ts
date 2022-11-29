@@ -36,7 +36,7 @@ export class CommentController {
     return this.postService.getCommentsInPost(id);
   }
 
-  @Get('reply/:id')
+  @Get(':id/reply')
   @Public()
   getReplyComment(@Param('id') id: string) {
     return this.commentService.getReplyComment(id);
