@@ -117,6 +117,7 @@ export class PostService extends BaseService<
   async likePost(userId: string, postId: string): Promise<UserPost> {
     try {
       const user = await this.userService.findSingleBy({ id: userId });
+
       try {
         const post = await this.findById(postId);
         post.addLikeUser(user);
@@ -132,14 +133,15 @@ export class PostService extends BaseService<
 
   async unlikePost(userId: string, postId: string): Promise<any> {
     try {
-      const post = await this.findById(postId, {
-        relations: ['likeUser'],
-      });
+      const post = await this.getLikesOfPost(postId);
+      // console.log('Pre:', post);
+
       try {
         // post.addLikeUser(user);
-        post.likeUser.filter((user) => {
+        post.likeUser = post.likeUser.filter((user) => {
           return userId != user.id;
         });
+        // console.log('After', post);
         return await this.postRepository.save(post);
       } catch (err) {
         throw new NotFoundException('There is no such post');
