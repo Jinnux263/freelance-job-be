@@ -46,7 +46,22 @@ export class PostService extends BaseService<
   }
 
   async getPostById(authUser: AuthUser, id: string): Promise<UserPost> {
-    const post = await this.findById(id);
+    const post = await this.findById(id, {
+      // relations: {
+      //   likeUser: true,
+      //   comment: true,
+      //   owner: true,
+      // },
+      join: {
+        alias: 'post',
+        leftJoinAndSelect: {
+          likeUser: 'post.likeUser',
+          owner: 'post.owner',
+          comment: 'post.comment',
+          replycomment: 'comment.replyComment',
+        },
+      },
+    });
     if (!post) {
       throw new NotFoundException('Could not find post');
     }
