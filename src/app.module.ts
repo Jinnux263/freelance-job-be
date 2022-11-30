@@ -20,24 +20,24 @@ function DatabaseOrmModule(): DynamicModule {
 
   return TypeOrmModule.forRoot({
     type: 'mysql',
-    // url: 'mysql://6b4la8697ref8mumodcc:pscale_pw_jOUz3kBM6DeG23PnAgh53v1Nn64WVLeyiLpuVThqwYC@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
+    url: 'mysql://6b4la8697ref8mumodcc:pscale_pw_jOUz3kBM6DeG23PnAgh53v1Nn64WVLeyiLpuVThqwYC@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
     port: parseInt(get(process.env, 'SQL_PORT', '3306')),
     entities: [User, UserPost, Poll, Comment],
-    // ssl: {
-    //   rejectUnauthorized: true,
-    //   // ca: '/etc/ssl/certs/ca-certificates.crt',
-    // },
-
-    host: get(process.env, 'SQL_HOST', '127.0.0.1'),
-    charset: 'utf8mb4',
-    // TODO: Change to read from .env file for security
-    username: 'root',
-    password: '',
-    database: 'myfreelancedb',
-    synchronize: true,
-    extra: {
-      charset: 'utf8mb4_unicode_ci',
+    ssl: {
+      rejectUnauthorized: true,
+      // ca: '/etc/ssl/certs/ca-certificates.crt',
     },
+
+    // host: get(process.env, 'SQL_HOST', '127.0.0.1'),
+    // charset: 'utf8mb4',
+    // // TODO: Change to read from .env file for security
+    // username: 'root',
+    // password: '',
+    // database: 'myfreelancedb',
+    // synchronize: true,
+    // extra: {
+    //   charset: 'utf8mb4_unicode_ci',
+    // },
   });
 }
 @Module({
