@@ -22,12 +22,15 @@ export class UserPost extends BaseEntityClass {
   id: string;
 
   @Column('varchar')
-  caption: string;
-
-  @Column('text', { nullable: true })
-  postpicture: string;
+  title: string;
 
   @Column('text')
+  content: string;
+
+  @Column('varchar', { nullable: true })
+  postpicture: string;
+
+  @Column('varchar')
   type: PostType;
 
   @ManyToOne((type) => User, (user) => user.createdPosts, {

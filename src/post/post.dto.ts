@@ -19,18 +19,27 @@ export class PostRequest {
 
 export class PostCreation {
   @ApiProperty({
-    description: 'Caption',
+    description: 'Title',
     type: String,
   })
   @IsString()
   @IsNotEmpty()
-  caption: string;
+  title: string;
+
+  @ApiProperty({
+    description: 'Content',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  content: string;
 
   @ApiProperty({
     description: 'Post picture',
     type: String,
   })
   @IsOptional()
+  @IsString()
   postpicture: string;
 
   constructor(init: Partial<PostCreation>) {
