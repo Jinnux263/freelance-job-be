@@ -20,19 +20,20 @@ function DatabaseOrmModule(): DynamicModule {
 
   return TypeOrmModule.forRoot({
     type: 'mysql',
-    url: 'mysql://6b4la8697ref8mumodcc:pscale_pw_jOUz3kBM6DeG23PnAgh53v1Nn64WVLeyiLpuVThqwYC@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
+    url: 'mysql://ilvr5rnoumn85ck8fpn2:pscale_pw_lKWtSqa95mh8yCT11BSG9LVSIhXX2d3kNBMXnBIEM4k@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
+
     port: parseInt(get(process.env, 'SQL_PORT', '3306')),
     entities: [User, UserPost, Poll, Comment],
     ssl: {
       rejectUnauthorized: true,
-      // ca: '/etc/ssl/certs/ca-certificates.crt',
+      ca: process.env.SSL_CERT,
     },
 
     // host: get(process.env, 'SQL_HOST', '127.0.0.1'),
+    // host: get(process.env, 'SQL_HOST', 'ap-southeast.connect.psdb.cloud'),
     // charset: 'utf8mb4',
-    // // TODO: Change to read from .env file for security
-    // username: 'root',
-    // password: '',
+    // username: 'nupt2a4zbdu2smzq2595',
+    // password: 'pscale_pw_eINz2vaQwGE9itQ1uTpNRIYM9C0SqXavX3XWNXS1Prt',
     // database: 'myfreelancedb',
     // synchronize: true,
     // extra: {

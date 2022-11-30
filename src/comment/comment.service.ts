@@ -75,10 +75,7 @@ export class CommentService extends BaseService<
         replyToComment: comment,
         owner: user,
       });
-      console.log(newComment);
-
       const createdComment = await this.create(newComment);
-
       return createdComment;
     } catch (err) {
       throw new InternalServerErrorException('Can not create new Comment');

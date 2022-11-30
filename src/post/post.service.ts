@@ -151,14 +151,11 @@ export class PostService extends BaseService<
   async unlikePost(userId: string, postId: string): Promise<any> {
     try {
       const post = await this.getLikesOfPost(postId);
-      // console.log('Pre:', post);
 
       try {
-        // post.addLikeUser(user);
         post.likeUser = post.likeUser.filter((user) => {
           return userId != user.id;
         });
-        // console.log('After', post);
         return await this.postRepository.save(post);
       } catch (err) {
         throw new NotFoundException('There is no such post');
