@@ -39,7 +39,6 @@ export class UserController {
   }
 
   @Get('')
-  @ApiTags('Admin Only')
   @ApiOkResponse({
     description: 'List of all users',
     type: User,
@@ -49,7 +48,7 @@ export class UserController {
   @ApiUnauthorizedResponse({
     description: 'Current user is not an admin',
   })
-  getUsers(@Request() request: { user: AuthUser }): Promise<User[]> {
+  getUsers(@Request() request: { user: AuthUser }): Promise<Partial<User[]>> {
     return this.userService.getAllUsers(request.user);
   }
 
@@ -69,16 +68,6 @@ export class UserController {
   ): Promise<User> {
     return this.userService.createNewUser(request.user, body);
   }
-
-  // @Post('admin')
-  // @ApiExcludeEndpoint()
-  // @Public()
-  // createAdminUser(
-  //   @Headers() headers: Record<string, string>,
-  //   @Body() body: UserCreation,
-  // ): Promise<User> {
-  //   return this.userService.createAdminUser(headers['secret'], body);
-  // }
 
   @Patch(':id')
   @ApiAcceptedResponse({

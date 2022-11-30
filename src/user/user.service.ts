@@ -63,11 +63,15 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     }
   }
 
-  async getAllUsers(authUser: AuthUser): Promise<User[]> {
-    const users = await this.verifyAndPerformAdminAction(authUser, () =>
-      this.findAll(),
+  async getAllUsers(authUser: AuthUser): Promise<Partial<User[]>> {
+    // const users = await this.verifyAndPerformAdminAction(authUser, () =>
+    //   this.findAll(),
+    // );
+    const users = await this.findAll();
+    const filterUsers = users.map((user) =>
+      pick(user, ['id', 'name', 'avatar', 'organization']),
     );
-    return users;
+    return filterUsers;
   }
 
   async getUserById(
@@ -79,7 +83,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       throw new UnauthorizedException('Token Invalid');
     } else {
       const queryUser = await this.findById(userId);
-      return currentUser.role === UserRole.ADMIN
+      return currentUser.role === UserRole.ADMIN || currentUser.id === userId
         ? queryUser
         : pick(currentUser, ['id', 'name', 'avatar', 'organization']);
     }

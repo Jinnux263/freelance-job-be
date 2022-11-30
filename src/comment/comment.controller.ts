@@ -6,9 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/auth/auth-user.decorator';
+import { AuthUser, Public } from 'src/auth/auth-user.decorator';
 import { PostService } from 'src/post/post.service';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -24,10 +25,15 @@ export class CommentController {
 
   @Post(':postId/comment')
   makeComment(
-    @Param('postId') id: string,
+    @Request() request: { user: AuthUser },
+    @Param('postId') postId: string,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    return this.commentService.createComment(id, createCommentDto);
+    return this.commentService.createCommentToPost(
+      request.user,
+      postId,
+      createCommentDto,
+    );
   }
 
   @Get(':postId/comment')
@@ -36,22 +42,44 @@ export class CommentController {
     return this.postService.getCommentsInPost(id);
   }
 
-  @Get('comment/:commentId/reply')
-  @Public()
-  getReplyComment(@Param('commentId') id: string) {
-    return this.commentService.getReplyComment(id);
+  // @Get('comment/:commentId/reply')
+  // @Public()
+  // getReplyComment(@Param('commentId') id: string) {
+  //   return this.commentService.getReplyComment(id);
+  // }
+
+  @Post('comment/:commentId')
+  replyComment(
+    @Request() request: { user: AuthUser },
+    @Param('commentId') commentId: string,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    return this.commentService.createCommentToComment(
+      request.user,
+      commentId,
+      createCommentDto,
+    );
   }
 
   @Patch('comment/:commentId')
   modifyComment(
+    @Request() request: { user: AuthUser },
+
     @Param('commentId') id: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
-    return this.commentService.updateComment(id, updateCommentDto);
+    return this.commentService.updateComment(
+      request.user,
+      id,
+      updateCommentDto,
+    );
   }
 
   @Delete('comment/:commentId')
-  removeComment(@Param('commentId') id: string) {
-    return this.commentService.removeComment(id);
+  removeComment(
+    @Request() request: { user: AuthUser },
+    @Param('commentId') id: string,
+  ) {
+    return this.commentService.removeComment(request.user, id);
   }
 }

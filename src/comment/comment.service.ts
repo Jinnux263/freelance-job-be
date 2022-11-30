@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthUser } from 'src/auth/auth-user.decorator';
@@ -30,18 +31,57 @@ export class CommentService extends BaseService<
     super(commentRepository, IdPrefix.COMMENT);
   }
 
-  async createComment(postId: string, createCommentDto: CreateCommentDto) {
+  async createCommentToPost(
+    authUser: AuthUser,
+    postId: string,
+    createCommentDto: CreateCommentDto,
+  ) {
     try {
+      const user = await this.userService.findSingleBy({ id: authUser.id });
+      if (!user) {
+        throw new NotFoundException('There is no user');
+      }
+
       const post = await this.postService.findSingleBy({ id: postId });
-      const newPost = new Comment({
+      if (!post) {
+        throw new InternalServerErrorException('There is no post');
+      }
+      const newComment = new Comment({
         ...createCommentDto,
         post: post,
+        owner: user,
       });
-      const createdPost = await this.create(newPost);
-
-      return createdPost;
+      const createdComment = await this.create(newComment);
+      return createdComment;
     } catch (err) {
-      throw new InternalServerErrorException('Can not create new Post');
+      throw new InternalServerErrorException('Can not create new Comment');
+    }
+  }
+
+  async createCommentToComment(
+    authUser: AuthUser,
+    commentId: string,
+    createCommentDto: CreateCommentDto,
+  ) {
+    try {
+      const user = await this.userService.findSingleBy({ id: authUser.id });
+      if (!user) {
+        throw new NotFoundException('There is no user');
+      }
+
+      const comment = await this.findSingleBy({ id: commentId });
+      const newComment = new Comment({
+        ...createCommentDto,
+        replyToComment: comment,
+        owner: user,
+      });
+      console.log(newComment);
+
+      const createdComment = await this.create(newComment);
+
+      return createdComment;
+    } catch (err) {
+      throw new InternalServerErrorException('Can not create new Comment');
     }
   }
 
@@ -57,18 +97,30 @@ export class CommentService extends BaseService<
     return comment;
   }
 
-  async updateComment(id: string, updateCommentDto: UpdateCommentDto) {
+  async updateComment(
+    authUser: AuthUser,
+    id: string,
+    updateCommentDto: UpdateCommentDto,
+  ) {
     try {
+      const user = await this.userService.findSingleBy({ id: authUser.id });
+      if (!user) {
+        throw new NotFoundException('There is no user');
+      }
+
       const comment = await this.findById(id);
       if (!comment) {
         throw new NotFoundException('There is no comment');
+      }
+
+      if (comment.owner.id != authUser.id) {
+        throw new UnauthorizedException('There is no user');
       }
       try {
         const newComment = await this.commentRepository.update(
           id,
           updateCommentDto,
         );
-        // Todo: Return comment sau khi da cap nhat
         return updateCommentDto;
       } catch (e) {
         console.log(e.message);
@@ -78,11 +130,20 @@ export class CommentService extends BaseService<
     }
   }
 
-  async removeComment(id: string) {
+  async removeComment(authUser: AuthUser, id: string) {
     try {
+      const user = await this.userService.findSingleBy({ id: authUser.id });
+      if (!user) {
+        throw new NotFoundException('There is no user');
+      }
+
       const comment = await this.findById(id);
       if (!comment) {
-        throw new NotFoundException('Can not delete comment');
+        throw new NotFoundException('There is no comment');
+      }
+
+      if (comment.owner.id != authUser.id) {
+        throw new UnauthorizedException('There is no user');
       }
       await this.deleteById(id);
       return new BaseResponse(200, 'Delete comment successfully');
@@ -91,16 +152,16 @@ export class CommentService extends BaseService<
     }
   }
 
-  async getReplyComment(commentId: string): Promise<Comment> {
-    const comment = await this.commentRepository.findOne({
-      where: { id: commentId },
-      relations: {
-        replyComment: true,
-      },
-    });
-    if (!comment) {
-      throw new NotFoundException('Comment is not existed');
-    }
-    return comment;
-  }
+  // async getReplyComment(commentId: string): Promise<Comment> {
+  //   const comment = await this.commentRepository.findOne({
+  //     where: { id: commentId },
+  //     relations: {
+  //       replyComment: true,
+  //     },
+  //   });
+  //   if (!comment) {
+  //     throw new NotFoundException('Comment is not existed');
+  //   }
+  //   return comment;
+  // }
 }

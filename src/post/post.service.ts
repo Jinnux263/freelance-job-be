@@ -95,7 +95,9 @@ export class PostService extends BaseService<
         comment: true,
       },
     });
-
+    if (!post) {
+      throw new NotFoundException('There is no post');
+    }
     return post;
   }
 
