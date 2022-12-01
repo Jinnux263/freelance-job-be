@@ -132,36 +132,60 @@ export class PostService extends BaseService<
   }
 
   async likePost(userId: string, postId: string): Promise<UserPost> {
+    const user = await this.userService.findSingleBy({ id: userId });
+
+    const likedPost = await this.postRepository.findOne({
+      where: {
+        id: postId,
+        likeUser: { id: user.id },
+      },
+      relations: {
+        likeUser: true,
+      },
+    });
+    if (likedPost) {
+      return likedPost;
+    }
+
     try {
-      const user = await this.userService.findSingleBy({ id: userId });
-
-      try {
-        const post = await this.findById(postId);
-        post.addLikeUser(user);
-
-        return await this.postRepository.save(post);
-      } catch (err) {
-        throw new NotFoundException('There is no such post');
-      }
+      const post = await this.findById(postId, {
+        relations: {
+          likeUser: true,
+        },
+      });
+      post.addLikeUser(user);
+      return await this.postRepository.save(post);
     } catch (err) {
-      throw new InternalServerErrorException('Can not like post');
+      console.log(err.message);
     }
   }
 
   async unlikePost(userId: string, postId: string): Promise<any> {
-    try {
-      const post = await this.getLikesOfPost(postId);
+    const user = await this.userService.findSingleBy({ id: userId });
 
-      try {
-        post.likeUser = post.likeUser.filter((user) => {
-          return userId != user.id;
-        });
-        return await this.postRepository.save(post);
-      } catch (err) {
-        throw new NotFoundException('There is no such post');
-      }
+    const likedPost = await this.postRepository.findOne({
+      where: {
+        id: postId,
+        likeUser: { id: user.id },
+      },
+      relations: {
+        likeUser: true,
+      },
+    });
+    if (!likedPost) {
+      throw new NotFoundException('You did not like this post');
+    }
+
+    const post = await this.getLikesOfPost(postId);
+
+    try {
+      post.likeUser = post.likeUser.filter((user) => {
+        return userId != user.id;
+      });
+      return await this.postRepository.save(post);
+      // return await this.postRepository.remove(likedPost);
     } catch (err) {
-      throw new InternalServerErrorException('Can not unlike post');
+      throw new NotFoundException('There is no such post');
     }
   }
 }

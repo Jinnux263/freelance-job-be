@@ -10,7 +10,7 @@ import {
 export class PostRequest {
   id?: string = null;
 
-  username?: string = null;
+  title?: string = null;
 
   constructor(init: Partial<PostRequest>) {
     return Object.assign(this, init);
