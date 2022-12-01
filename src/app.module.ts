@@ -26,7 +26,6 @@ function DatabaseOrmModule(): DynamicModule {
     entities: [User, UserPost, Poll, Comment],
     ssl: {
       rejectUnauthorized: true,
-      ca: process.env.SSL_CERT,
     },
 
     // host: get(process.env, 'SQL_HOST', '127.0.0.1'),
