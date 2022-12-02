@@ -103,7 +103,10 @@ export class PostService extends BaseService<
   }
 
   async getPosts(authUser: AuthUser): Promise<UserPost[]> {
-    const posts = await this.findAll();
+    const posts = await this.postRepository.find({
+      where: {},
+      relations: { owner: true },
+    });
     return posts;
   }
 
