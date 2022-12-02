@@ -22,23 +22,23 @@ function DatabaseOrmModule(): DynamicModule {
 
   return TypeOrmModule.forRoot({
     type: 'mysql',
-    // url: 'mysql://ilvr5rnoumn85ck8fpn2:pscale_pw_lKWtSqa95mh8yCT11BSG9LVSIhXX2d3kNBMXnBIEM4k@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
+    url: 'mysql://ilvr5rnoumn85ck8fpn2:pscale_pw_lKWtSqa95mh8yCT11BSG9LVSIhXX2d3kNBMXnBIEM4k@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
 
     port: parseInt(get(process.env, 'SQL_PORT', '3306')),
     entities: [User, UserPost, Poll, Comment, PostRequest],
-    // ssl: {
-    //   rejectUnauthorized: true,
-    // },
-
-    host: get(process.env, 'SQL_HOST', '127.0.0.1'),
-    charset: 'utf8mb4',
-    username: 'root',
-    password: '',
-    database: 'myfreelancedb',
-    synchronize: true,
-    extra: {
-      charset: 'utf8mb4_unicode_ci',
+    ssl: {
+      rejectUnauthorized: true,
     },
+
+    // host: get(process.env, 'SQL_HOST', '127.0.0.1'),
+    // charset: 'utf8mb4',
+    // username: 'root',
+    // password: '',
+    // database: 'myfreelancedb',
+    // synchronize: true,
+    // extra: {
+    //   charset: 'utf8mb4_unicode_ci',
+    // },
   });
 }
 @Module({
