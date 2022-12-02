@@ -173,4 +173,23 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
 
     return user;
   }
+
+  async getPostRequestsOfUser(
+    authUser: AuthUser,
+    userId: string,
+  ): Promise<User> {
+    const seeker = await this.findById(authUser.id);
+    if (seeker.role === UserRole.ADMIN || seeker.id === userId) {
+      const user = await this.userRepository.findOne({
+        where: {
+          id: userId,
+        },
+        relations: {
+          createdPostRequest: true,
+        },
+      });
+      return user;
+    }
+    throw new UnauthorizedException('Can not do this task');
+  }
 }

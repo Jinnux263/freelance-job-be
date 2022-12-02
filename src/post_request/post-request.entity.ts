@@ -17,7 +17,7 @@ export enum PostType {
 }
 
 @Entity()
-export class UserPost extends BaseEntityClass {
+export class PostRequest extends BaseEntityClass {
   @PrimaryColumn('varchar', { length: 41 })
   id: string;
 
@@ -33,28 +33,15 @@ export class UserPost extends BaseEntityClass {
   @Column('varchar')
   type: PostType;
 
-  @ManyToOne((type) => User, (user) => user.createdPosts, {
+  @Column('bool')
+  isApproved: Boolean;
+
+  @ManyToOne((type) => User, (user) => user.createdPostRequest, {
     cascade: true,
   })
   owner: User;
 
-  @OneToMany((type) => Comment, (comment) => comment.post)
-  comment: Comment[];
-
-  @ManyToMany((type) => User, (user) => user.likedPosts, {
-    cascade: true,
-  })
-  @JoinTable()
-  likeUser: User[];
-
-  addLikeUser(user: User) {
-    if (this.likeUser == null) {
-      this.likeUser = new Array<User>();
-    }
-    this.likeUser.push(user);
-  }
-
-  constructor(init: Partial<UserPost>) {
+  constructor(init: Partial<PostRequest>) {
     super();
     return Object.assign(this, init);
   }

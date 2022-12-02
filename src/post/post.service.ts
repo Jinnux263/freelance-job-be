@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { BaseService } from 'src/base/base.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +13,8 @@ import { PostType, UserPost } from 'src/post/post.entity';
 import { PostCreation, PostRequest, PostUpdation } from 'src/post/post.dto';
 import { UserService } from 'src/user/user.service';
 import { BaseResponse } from 'src/base/base.dto';
+import { UserRole } from 'src/user/user.entity';
+import { PostRequestService } from 'src/post_request/post-request.service';
 
 @Injectable()
 export class PostService extends BaseService<
@@ -23,6 +26,7 @@ export class PostService extends BaseService<
     @InjectRepository(UserPost)
     private readonly postRepository: Repository<UserPost>,
     private readonly userService: UserService,
+    private readonly postRequestService: PostRequestService,
   ) {
     super(postRepository, IdPrefix.POST);
   }
@@ -39,6 +43,34 @@ export class PostService extends BaseService<
       });
       const createdPost = await this.create(newPost);
 
+      return createdPost;
+    } catch (err) {
+      throw new InternalServerErrorException('Can not create new Post');
+    }
+  }
+  async approvePost(
+    authUser: AuthUser,
+    postRequestId: string,
+  ): Promise<UserPost> {
+    const adminUser = await this.userService.findSingleBy({ id: authUser.id });
+    if (adminUser.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('User are not authorized');
+    }
+    const post = this.postRequestService.findSingleBy({
+      id: postRequestId,
+      isApproved: false,
+    });
+    if (!post) {
+      throw new NotFoundException('There is no such post');
+    }
+
+    const newPost = new UserPost({
+      type: PostType.PUBLIC,
+      ...post,
+    });
+    try {
+      const createdPost = await this.create(newPost);
+      await this.postRequestService.approvePost(authUser, postRequestId);
       return createdPost;
     } catch (err) {
       throw new InternalServerErrorException('Can not create new Post');

@@ -1,6 +1,7 @@
 import { BaseEntityClass } from 'src/base/base.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { UserPost } from 'src/post/post.entity';
+import { PostRequest } from 'src/post_request/post-request.entity';
 import { SAMPLE_DATE, SAMPLE_USER_ID } from 'src/utils';
 import {
   Entity,
@@ -44,6 +45,9 @@ export class User extends BaseEntityClass {
 
   @OneToMany((type) => UserPost, (post) => post.owner)
   createdPosts: UserPost[];
+
+  @OneToMany((type) => PostRequest, (post) => post.owner)
+  createdPostRequest: PostRequest[];
 
   @ManyToMany((type) => UserPost, (post) => post.likeUser)
   likedPosts: UserPost[];

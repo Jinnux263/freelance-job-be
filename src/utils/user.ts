@@ -3,6 +3,7 @@ import { User } from 'src/user/user.entity';
 export enum IdPrefix {
   USER = 'user',
   POST = 'post',
+  POST_REQUEST = 'post_request',
   COMMENT = 'comment',
   POLL = 'poll',
 }

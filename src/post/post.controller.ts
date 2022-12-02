@@ -24,13 +24,18 @@ export class PostController {
     private readonly userService: UserService,
   ) {}
 
-  @Post('')
-  createPost(
-    @Request() request: { user: AuthUser },
-    @Body() body: PostCreation,
-  ): Promise<UserPost> {
-    return this.postService.createPost(request.user, body);
+  @Post('post-request/:id/approve')
+  approvePost(@Request() request: { user: AuthUser }, @Param('id') id: string) {
+    return this.postService.approvePost(request.user, id);
   }
+
+  // @Post('')
+  // createPost(
+  //   @Request() request: { user: AuthUser },
+  //   @Body() body: PostCreation,
+  // ): Promise<UserPost> {
+  //   return this.postService.createPost(request.user, body);
+  // }
 
   @Get(':id')
   @Public()
