@@ -15,6 +15,7 @@ import { UserService } from 'src/user/user.service';
 import { BaseResponse } from 'src/base/base.dto';
 import { UserRole } from 'src/user/user.entity';
 import { PostRequestService } from 'src/post_request/post-request.service';
+import { APPROVE_STATUS } from 'src/post_request/post-request.entity';
 
 @Injectable()
 export class PostService extends BaseService<
@@ -56,7 +57,7 @@ export class PostService extends BaseService<
     if (adminUser.role !== UserRole.ADMIN) {
       throw new UnauthorizedException('User are not authorized');
     }
-    const post = this.postRequestService.findSingleBy({
+    const post = await this.postRequestService.findSingleBy({
       id: postRequestId,
       isApproved: false,
     });
@@ -65,14 +66,15 @@ export class PostService extends BaseService<
     }
 
     const newPost = new UserPost({
-      type: PostType.PUBLIC,
       ...post,
     });
+
     try {
       const createdPost = await this.create(newPost);
-      await this.postRequestService.approvePost(authUser, postRequestId);
+      await this.postRequestService.approvePostRequest(authUser, postRequestId);
       return createdPost;
     } catch (err) {
+      // console.log(err.message);
       throw new InternalServerErrorException('Can not create new Post');
     }
   }

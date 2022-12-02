@@ -107,6 +107,7 @@ export class AuthService {
       throw new ConflictException('User has been created');
     }
 
+    newUser['role'] = UserRole.USER;
     return this.userService.verifyAndCreateNewUser(newUser);
   }
 }

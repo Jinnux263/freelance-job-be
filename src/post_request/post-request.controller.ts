@@ -1,5 +1,5 @@
 import { AuthUser, Public } from 'src/auth/auth-user.decorator';
-import { PostRequest } from './post-request.entity';
+import { APPROVE_STATUS, PostRequest } from './post-request.entity';
 import { PostRequestService } from './post-request.service';
 import {
   Body,
@@ -19,8 +19,8 @@ import {
   PostRequestUpdation,
 } from 'src/post_request/post-request.dto';
 
-@ApiTags('Post API')
-@Controller('post')
+@ApiTags('Post Request API')
+@Controller('post-request')
 export class PostRequestController {
   constructor(
     private readonly postRequestService: PostRequestService,
@@ -32,18 +32,18 @@ export class PostRequestController {
     @Request() request: { user: AuthUser },
     @Body() body: PostRequestCreation,
   ): Promise<PostRequest> {
-    return this.postRequestService.createPost(request.user, body);
+    return this.postRequestService.createPostRequest(request.user, body);
   }
 
-  @Get('post-request/:id')
+  @Get(':id')
   getPost(
     @Param('id') id: string,
     @Request() request: { user: AuthUser },
   ): Promise<Partial<PostRequest>> {
-    return this.postRequestService.getPostById(request.user, id);
+    return this.postRequestService.getPostRequestById(request.user, id);
   }
 
-  @Get('post-request/user/:userId')
+  @Get('user/:userId')
   getPostsOfUser(
     @Request() request: { user: AuthUser },
     @Param('userId') id: string,
@@ -53,22 +53,31 @@ export class PostRequestController {
     return this.userService.getPostRequestsOfUser(request.user, id);
   }
 
-  @Get('post-request')
+  @Get('')
   getPosts(@Request() request: { user: AuthUser }): Promise<PostRequest[]> {
-    return this.postRequestService.getPosts(request.user);
+    return this.postRequestService.getPostRequests(request.user);
   }
 
-  @Patch('post-request/:id')
+  // @Get('post-request/approved/all')
+  // getApprovedPosts(
+  //   @Request() request: { user: AuthUser },
+  // ): Promise<PostRequest[]> {
+  //   return this.postRequestService.getPostRequests(request.user, {
+  //     isApproved: APPROVE_STATUS.APPROVED,
+  //   });
+  // }
+
+  @Patch(':id')
   updatePost(
     @Request() request: { user: AuthUser },
     @Param('id') id: string,
     @Body() body: PostRequestUpdation,
   ) {
-    return this.postRequestService.updatePost(request.user, id, body);
+    return this.postRequestService.updatePostRequest(request.user, id, body);
   }
 
-  @Delete('post-request/:id')
+  @Delete(':id')
   removePost(@Request() request: { user: AuthUser }, @Param('id') id: string) {
-    return this.postRequestService.deletePost(request.user, id);
+    return this.postRequestService.deletePostRequest(request.user, id);
   }
 }

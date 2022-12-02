@@ -16,6 +16,11 @@ export enum PostType {
   PRIVATE = 'PRIVATE',
 }
 
+export enum APPROVE_STATUS {
+  APPROVED = 'approved',
+  PENDDING = 'pendding',
+  REJECTED = 'rejected',
+}
 @Entity()
 export class PostRequest extends BaseEntityClass {
   @PrimaryColumn('varchar', { length: 41 })
@@ -33,8 +38,11 @@ export class PostRequest extends BaseEntityClass {
   @Column('varchar')
   type: PostType;
 
-  @Column('bool')
-  isApproved: Boolean;
+  @Column({
+    type: 'bool',
+    default: false,
+  })
+  isApproved: boolean;
 
   @ManyToOne((type) => User, (user) => user.createdPostRequest, {
     cascade: true,

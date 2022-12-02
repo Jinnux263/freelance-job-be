@@ -10,7 +10,11 @@ import { Repository } from 'typeorm';
 import { IdPrefix } from 'src/utils';
 import { UserService } from 'src/user/user.service';
 import { BaseResponse } from 'src/base/base.dto';
-import { PostRequest, PostType } from 'src/post_request/post-request.entity';
+import {
+  APPROVE_STATUS,
+  PostRequest,
+  PostType,
+} from 'src/post_request/post-request.entity';
 import {
   PostRequestCreation,
   PostRequestDto,
@@ -31,7 +35,7 @@ export class PostRequestService extends BaseService<
   ) {
     super(postRequestRepository, IdPrefix.POST_REQUEST);
   }
-  async createPost(
+  async createPostRequest(
     authUser: AuthUser,
     postCreation: PostRequestCreation,
   ): Promise<PostRequest> {
@@ -54,7 +58,10 @@ export class PostRequestService extends BaseService<
     }
   }
 
-  async getPostById(authUser: AuthUser, id: string): Promise<PostRequest> {
+  async getPostRequestById(
+    authUser: AuthUser,
+    id: string,
+  ): Promise<PostRequest> {
     const post = await this.findById(id, {
       relations: {
         owner: true,
@@ -66,8 +73,12 @@ export class PostRequestService extends BaseService<
     return post;
   }
 
-  async getPosts(authUser: AuthUser): Promise<PostRequest[]> {
+  async getPostRequests(
+    authUser: AuthUser,
+    options?: any,
+  ): Promise<PostRequest[]> {
     const user = await this.userService.findSingleBy({ id: authUser.id });
+
     if (user.role === UserRole.ADMIN) {
       return await this.findAll();
     } else {
@@ -76,6 +87,7 @@ export class PostRequestService extends BaseService<
           owner: {
             id: authUser.id,
           },
+          // ...options,
         },
         relations: {
           owner: true,
@@ -84,7 +96,7 @@ export class PostRequestService extends BaseService<
     }
   }
 
-  async updatePost(
+  async updatePostRequest(
     authUser: AuthUser,
     id: string,
     updatePost: PostRequestUpdation,
@@ -101,7 +113,10 @@ export class PostRequestService extends BaseService<
     }
   }
 
-  async deletePost(authUser: AuthUser, id: string): Promise<BaseResponse> {
+  async deletePostRequest(
+    authUser: AuthUser,
+    id: string,
+  ): Promise<BaseResponse> {
     try {
       const post = await this.findById(id);
       if (!post) {
@@ -114,7 +129,10 @@ export class PostRequestService extends BaseService<
     }
   }
 
-  async approvePost(authUser: AuthUser, postId: string): Promise<PostRequest> {
+  async approvePostRequest(
+    authUser: AuthUser,
+    postId: string,
+  ): Promise<PostRequest> {
     return this.userService.verifyAndPerformAdminAction(authUser, async () => {
       const post = await this.postRequestRepository.findOneBy({ id: postId });
       post.isApproved = true;
