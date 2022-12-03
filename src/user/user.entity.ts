@@ -72,6 +72,6 @@ export class User extends BaseEntityClass {
   @ManyToMany((type) => PollAnswer, (comment) => comment.votedUser)
   votedPollAnswer: PollAnswer[];
 
-  @OneToMany((type) => Poll, (comment) => comment.votedUser)
+  @ManyToMany((type) => Poll, (comment) => comment.votedUser)
   votedPoll: Poll[];
 }

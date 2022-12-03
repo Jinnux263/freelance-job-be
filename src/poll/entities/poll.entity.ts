@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -34,12 +35,19 @@ export class Poll extends BaseEntityClass {
   @Column('text')
   description: string;
 
-  @ManyToOne((type) => User)
+  @ManyToOne((type) => User, {
+    cascade: true,
+  })
   host: User;
 
-  @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll)
+  @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll, {
+    eager: true,
+  })
   optionAns: PollAnswer[];
 
-  @OneToMany((type) => User, (user) => user.votedPoll)
+  @ManyToMany((type) => User, (user) => user.votedPoll, {
+    cascade: true,
+  })
+  @JoinTable()
   votedUser: User[];
 }

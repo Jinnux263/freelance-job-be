@@ -24,10 +24,15 @@ export class PollAnswer extends BaseEntityClass {
   @Column('text')
   answer: string;
 
-  @ManyToOne((type) => Poll, (pollAns) => pollAns.optionAns)
+  @ManyToOne((type) => Poll, (pollAns) => pollAns.optionAns, {
+    cascade: true,
+  })
   poll: Poll;
 
-  @ManyToMany((type) => User, (user) => user.votedPollAnswer)
+  @ManyToMany((type) => User, (user) => user.votedPollAnswer, {
+    cascade: true,
+    eager: true,
+  })
   @JoinTable()
   votedUser: [];
 }
