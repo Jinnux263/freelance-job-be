@@ -1,5 +1,7 @@
 import { BaseEntityClass } from 'src/base/base.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
+import { PollAnswer } from 'src/poll/entities/poll-answer.entity';
+import { Poll } from 'src/poll/entities/poll.entity';
 import { UserPost } from 'src/post/post.entity';
 import { PostRequest } from 'src/post_request/post-request.entity';
 import { SAMPLE_DATE, SAMPLE_USER_ID } from 'src/utils';
@@ -31,10 +33,22 @@ export class User extends BaseEntityClass {
   @Column('text', { select: false })
   password: string;
 
-  @Column('text')
-  name: string;
+  @Column('varchar')
+  firstName: string;
 
-  @Column('text')
+  @Column('varchar')
+  lastName: string;
+
+  @Column('varchar')
+  address: string;
+
+  @Column('varchar')
+  city: string;
+
+  @Column('varchar')
+  country: string;
+
+  @Column('varchar')
   role: UserRole;
 
   @Column('varchar', { nullable: true })
@@ -54,4 +68,10 @@ export class User extends BaseEntityClass {
 
   @OneToMany((type) => Comment, (comment) => comment.owner)
   comments: Comment[];
+
+  @ManyToMany((type) => PollAnswer, (comment) => comment.votedUser)
+  votedPollAnswer: PollAnswer[];
+
+  @OneToMany((type) => Poll, (comment) => comment.votedUser)
+  votedPoll: Poll[];
 }

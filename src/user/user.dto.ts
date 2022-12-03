@@ -20,14 +20,6 @@ export class UserRequest {
 
 export class UserCreation {
   @ApiProperty({
-    description: 'Full Name of User',
-    type: String,
-    example: 'John Doe',
-  })
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty({
     description: 'Username',
     type: String,
     example: 'johndoe',
@@ -43,6 +35,74 @@ export class UserCreation {
   @IsNotEmpty()
   password: string;
 
+  @ApiProperty({
+    description: 'User firstName',
+    type: String,
+    example: 'David',
+  })
+  @IsOptional()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty({
+    description: 'User lastName',
+    type: String,
+    required: false,
+    example: 'Laid',
+  })
+  @IsOptional()
+  @IsString()
+  lastName: string;
+
+  @ApiProperty({
+    description: 'User address',
+    type: String,
+    required: false,
+    example: '17 Ems Road, CSE, Ho Chi Minh city',
+  })
+  @IsOptional()
+  @IsString()
+  address: string;
+
+  @ApiProperty({
+    description: 'User city',
+    type: String,
+    required: false,
+    example: 'Ho Chi Minh city University of Technology',
+  })
+  @IsOptional()
+  @IsString()
+  city: string;
+
+  @ApiProperty({
+    description: 'User country',
+    type: String,
+    required: false,
+    example: 'Viet Nam',
+  })
+  @IsOptional()
+  @IsString()
+  country: string;
+
+  @ApiProperty({
+    description: 'User Email',
+    type: String,
+    required: false,
+    example: 'abc@gmail.com',
+  })
+  @IsEmail()
+  mail: string;
+
+  @ApiProperty({
+    description: 'User Organization',
+    type: String,
+    required: false,
+    example: 'CSE, Ho Chi Minh city University of Technology',
+  })
+  @IsOptional()
+  @IsString()
+  organization: string;
+
   // @ApiProperty({
   //   description: 'Role of User',
   //   enum: UserRole,
@@ -52,102 +112,11 @@ export class UserCreation {
   // @IsEnum(UserRole)
   // role: UserRole;
 
-  @ApiProperty({
-    description: 'User Email',
-    type: String,
-    required: false,
-    example: 'abc@gmail.com',
-  })
-  @IsEmail()
-  @IsOptional()
-  mail: string;
-
-  @ApiProperty({
-    description: 'User Organization',
-    type: String,
-    required: false,
-    example: 'CSE, Ho Chi Minh city University of Technology',
-  })
-  @IsOptional()
-  organization: string;
-
   constructor(init: Partial<UserCreation>) {
     return Object.assign(this, init);
   }
 }
 
-export class UserUpdation {
-  @ApiProperty({
-    description: 'Full Name of User',
-    type: String,
-    example: 'John Doe',
-  })
-  @IsString()
-  @IsOptional()
-  name: string;
+export class UserUpdation extends UserCreation {}
 
-  @ApiProperty({
-    description: 'Role of User',
-    enum: UserRole,
-    example: UserRole.USER,
-  })
-  @IsEnum(UserRole)
-  @IsOptional()
-  role: UserRole;
-
-  @ApiProperty({
-    description: 'User Email',
-    type: String,
-    required: false,
-    example: 'abc@gmail.com',
-  })
-  @IsEmail()
-  @IsOptional()
-  mail: string;
-
-  @ApiProperty({
-    description: 'User Organization',
-    type: String,
-    required: false,
-    example: 'CSE, Ho Chi Minh city University of Technology',
-  })
-  @IsOptional()
-  organization: string;
-
-  constructor(init: Partial<UserCreation>) {
-    return Object.assign(this, init);
-  }
-}
-
-export class UserSelfUpdation {
-  @ApiProperty({
-    description: 'Full Name of User',
-    type: String,
-    example: 'John Doe',
-  })
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty({
-    description: 'User Email',
-    type: String,
-    required: false,
-    example: 'abc@gmail.com',
-  })
-  @IsEmail()
-  @IsOptional()
-  mail: string;
-
-  @ApiProperty({
-    description: 'User Organization',
-    type: String,
-    required: false,
-    example: 'CSE, Ho Chi Minh city University of Technology',
-  })
-  @IsOptional()
-  organization: string;
-
-  constructor(init: Partial<UserCreation>) {
-    return Object.assign(this, init);
-  }
-}
+export class UserSelfUpdation extends UserCreation {}
