@@ -40,7 +40,6 @@ export class UserCreation {
     type: String,
     example: 'David',
   })
-  @IsOptional()
   @IsString()
   firstName: string;
 
@@ -50,7 +49,6 @@ export class UserCreation {
     required: false,
     example: 'Laid',
   })
-  @IsOptional()
   @IsString()
   lastName: string;
 

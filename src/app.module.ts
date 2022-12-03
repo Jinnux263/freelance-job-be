@@ -23,27 +23,27 @@ function DatabaseOrmModule(): DynamicModule {
 
   return TypeOrmModule.forRoot({
     type: 'mysql',
-    // url: 'mysql://0rqorqntl9ardof2ixpc:pscale_pw_Q8xpDJbnUjrLfb0kUY2UBiIGNKIvQLmuVMsdY5IZHxU@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
+    url: 'mysql://c4yvvv5bvrk8b2rr27sh:pscale_pw_xMWHGFWCgszDAXPSlqyqDrZHyknFTy5gHPcispLPL4k@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
 
     port: parseInt(get(process.env, 'SQL_PORT', '3306')),
     entities: [User, UserPost, Poll, Comment, PostRequest, PollAnswer],
-    // ssl: {
-    //   rejectUnauthorized: true,
-    //   // ca: process.env.SSL,
-    // },
-
-    host: get(process.env, 'SQL_HOST', '127.0.0.1'),
-    // host: get(process.env, 'SQL_HOST', 'ap-southeast.connect.psdb.cloud'),
-    charset: 'utf8mb4',
-    // username: '0rqorqntl9ardof2ixpc',
-    // password: 'pscale_pw_Q8xpDJbnUjrLfb0kUY2UBiIGNKIvQLmuVMsdY5IZHxU',
-    username: 'root',
-    password: '',
-    database: 'myfreelancedb',
-    synchronize: true,
-    extra: {
-      charset: 'utf8mb4_unicode_ci',
+    ssl: {
+      rejectUnauthorized: true,
+      // ca: process.env.SSL,
     },
+
+    // host: get(process.env, 'SQL_HOST', 'ap-southeast.connect.psdb.cloud'),
+    // username: 'c4yvvv5bvrk8b2rr27sh',
+    // password: 'pscale_pw_xMWHGFWCgszDAXPSlqyqDrZHyknFTy5gHPcispLPL4k',
+    // // host: get(process.env, 'SQL_HOST', '127.0.0.1'),
+    // // username: 'root',
+    // // password: '',
+    // charset: 'utf8mb4',
+    // database: 'myfreelancedb',
+    // synchronize: true,
+    // extra: {
+    //   charset: 'utf8mb4_unicode_ci',
+    // },
   });
 }
 @Module({

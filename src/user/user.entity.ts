@@ -39,13 +39,13 @@ export class User extends BaseEntityClass {
   @Column('varchar')
   lastName: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   address: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   city: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   country: string;
 
   @Column('varchar')
