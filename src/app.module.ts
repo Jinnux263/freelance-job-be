@@ -16,6 +16,8 @@ import { CommentModule } from './comment/comment.module';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { PostRequest } from 'src/post_request/post-request.entity';
 import { PostRequestModule } from 'src/post_request/post-request.module';
+import { PollAnswer } from 'src/poll/entities/poll-answer.entity';
+import { PollVote } from 'src/poll/entities/poll-vote.entity';
 
 function DatabaseOrmModule(): DynamicModule {
   dotenv.config();
@@ -25,7 +27,15 @@ function DatabaseOrmModule(): DynamicModule {
     // url: 'mysql://0rqorqntl9ardof2ixpc:pscale_pw_Q8xpDJbnUjrLfb0kUY2UBiIGNKIvQLmuVMsdY5IZHxU@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
 
     port: parseInt(get(process.env, 'SQL_PORT', '3306')),
-    entities: [User, UserPost, Poll, Comment, PostRequest],
+    entities: [
+      User,
+      UserPost,
+      Poll,
+      Comment,
+      PostRequest,
+      PollAnswer,
+      PollVote,
+    ],
     // ssl: {
     //   rejectUnauthorized: true,
     //   // ca: process.env.SSL,

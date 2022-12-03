@@ -69,7 +69,16 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     // );
     const users = await this.findAll();
     const filterUsers = users.map((user) =>
-      pick(user, ['id', 'name', 'avatar', 'organization']),
+      pick(user, [
+        'id',
+        'avatar',
+        'organization',
+        'firstName',
+        'lastName',
+        'role',
+        'city',
+        'country',
+      ]),
     );
     return filterUsers;
   }

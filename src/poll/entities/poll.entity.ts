@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntityClass } from 'src/base/base.entity';
-import { PollAnser } from 'src/poll/entities/poll-answer.entity';
+import { PollAnswer } from 'src/poll/entities/poll-answer.entity';
 import { User } from 'src/user/user.entity';
 import {
   Entity,
@@ -37,6 +37,9 @@ export class Poll extends BaseEntityClass {
   @ManyToOne((type) => User)
   host: User;
 
-  @OneToMany((type) => PollAnser, (pollQuestion) => pollQuestion.poll)
-  optionAns: PollAnser[];
+  @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll)
+  optionAns: PollAnswer[];
+
+  @OneToMany((type) => User, (user) => user.votedPoll)
+  votedUser: User[];
 }
