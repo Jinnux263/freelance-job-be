@@ -5,10 +5,9 @@ import { PollController } from './poll.controller';
 import { PollService } from './poll.service';
 import { UserModule } from 'src/user/user.module';
 import { PollAnswer } from 'src/poll/entities/poll-answer.entity';
-import { PollVote } from 'src/poll/entities/poll-vote.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Poll, PollAnswer, PollVote]), UserModule],
+  imports: [TypeOrmModule.forFeature([Poll, PollAnswer]), UserModule],
   controllers: [PollController],
   providers: [PollService],
 })
