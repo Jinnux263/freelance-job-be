@@ -22,7 +22,7 @@ export class PollAnswer extends BaseEntityClass {
   id: string;
 
   @Column('text')
-  answer: string;
+  answerOption: string;
 
   @ManyToOne((type) => Poll, (pollAns) => pollAns.optionAns, {
     cascade: true,
@@ -34,5 +34,5 @@ export class PollAnswer extends BaseEntityClass {
     eager: true,
   })
   @JoinTable()
-  votedUser: [];
+  votedUser: User[];
 }

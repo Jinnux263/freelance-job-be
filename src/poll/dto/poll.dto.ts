@@ -20,11 +20,25 @@ export class PollRequestDto {
 }
 
 export class PollCreation {
+  @ApiProperty({
+    description: 'Poll Question',
+    type: String,
+    example: 'Cac ban muon lam gi hom nay?',
+  })
+  @IsString()
   title: string;
 
+  @ApiProperty({
+    description: 'Description for Poll',
+    type: String,
+    required: false,
+    example: 'Co the tao them cac lua chon neu ban thich',
+  })
+  @IsOptional()
+  @IsString()
   description?: string;
 
-  optionAns?: PollAnswer[];
+  // optionAns?: PollAnswer[];
 
   constructor(init: Partial<PollCreation>) {
     return Object.assign(this, init);

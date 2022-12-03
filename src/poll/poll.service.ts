@@ -42,6 +42,8 @@ export class PollService extends BaseService<
     authUser: AuthUser,
     pollCreation: PollCreation,
   ): Promise<any> {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+    pollCreation['host'] = user;
     return await this.create(pollCreation);
   }
 
@@ -50,7 +52,7 @@ export class PollService extends BaseService<
   }
 
   async getPoll(authUser: AuthUser, pollId: string): Promise<any> {
-    return await this.findSingleBy(
+    const poll = await this.findSingleBy(
       { id: pollId },
       {
         relations: {
@@ -59,6 +61,12 @@ export class PollService extends BaseService<
         },
       },
     );
+
+    if (!poll) {
+      throw new NotFoundException('There is no poll');
+    }
+
+    return poll;
   }
 
   async updatePoll(
@@ -66,10 +74,42 @@ export class PollService extends BaseService<
     pollId: string,
     pollUpdatetion: PollUpdation,
   ): Promise<any> {
+    const checkValid = await this.pollRepository.find({
+      where: {
+        id: pollId,
+        host: {
+          id: authUser.id,
+        },
+      },
+      relations: {
+        host: true,
+      },
+    });
+
+    if (!checkValid) {
+      throw new InternalServerErrorException('You can not do this task');
+    }
+
     return await this.update(pollId, pollUpdatetion);
   }
 
   async deletePoll(authUser: AuthUser, pollId: string): Promise<BaseResponse> {
+    const checkValid = await this.pollRepository.find({
+      where: {
+        id: pollId,
+        host: {
+          id: authUser.id,
+        },
+      },
+      relations: {
+        host: true,
+      },
+    });
+
+    if (!checkValid) {
+      throw new InternalServerErrorException('You can not do this task');
+    }
+
     try {
       await this.deleteById(pollId);
       return new BaseResponse(200, 'Delete poll successfully');
@@ -101,7 +141,22 @@ export class PollService extends BaseService<
     authUser: AuthUser,
     optionId: string,
     pollAnswerUpdation: PollAnswerUpdation,
-  ): Promise<any> {}
+  ): Promise<any> {
+    const pollAnswer = await this.pollAnswerRepository.findOne({
+      where: {
+        id: optionId,
+      },
+      relationLoadStrategy: 'query',
+    });
+    if (!pollAnswer) {
+      throw new NotFoundException('There is no option');
+    }
+
+    await this.pollAnswerRepository.update(optionId, {
+      answerOption: pollAnswerUpdation.answerOption,
+    });
+    return pollAnswer;
+  }
 
   // Todo: Khong can
   async getAllPollOptions(authUser: AuthUser, pollId: string): Promise<any> {
@@ -138,5 +193,75 @@ export class PollService extends BaseService<
   }
 
   // Poll Interaction
-  async vote(authUser: AuthUser, optionId: string): Promise<any> {}
+  async vote(
+    authUser: AuthUser,
+    pollId: string,
+    optionId: string,
+  ): Promise<any> {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+
+    const poll = await this.findSingleBy(
+      {
+        id: pollId,
+        optionAns: { id: optionId },
+      },
+      {
+        relations: {
+          optionAns: {
+            votedUser: true,
+          },
+        },
+      },
+    );
+    if (!poll) {
+      throw new NotFoundException('There is no poll or poll option');
+    }
+
+    poll.optionAns.map((option) => {
+      if (option.id == optionId) {
+        option.votedUser.push(user);
+      }
+    });
+    console.log(poll);
+
+    return await this.pollRepository.save(poll);
+    return poll;
+  }
+
+  async unvote(
+    authUser: AuthUser,
+    pollId: string,
+    optionId: string,
+  ): Promise<any> {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+
+    const poll = await this.findSingleBy(
+      {
+        id: pollId,
+        optionAns: { id: optionId },
+      },
+      {
+        relations: {
+          optionAns: {
+            votedUser: true,
+          },
+        },
+      },
+    );
+    if (!poll) {
+      throw new NotFoundException('There is no poll or poll option');
+    }
+
+    poll.optionAns.map((option) => {
+      if (option.id == optionId) {
+        option.votedUser = option.votedUser.filter(
+          (user) => user.id != authUser.id,
+        );
+      }
+    });
+    // console.log(poll);
+
+    await this.pollRepository.save(poll);
+    return poll;
+  }
 }

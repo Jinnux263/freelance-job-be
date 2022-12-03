@@ -40,9 +40,7 @@ export class Poll extends BaseEntityClass {
   })
   host: User;
 
-  @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll, {
-    cascade: true,
-  })
+  @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll)
   optionAns: PollAnswer[];
 
   @ManyToMany((type) => User, (user) => user.votedPoll, {
