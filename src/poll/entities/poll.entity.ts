@@ -43,9 +43,9 @@ export class Poll extends BaseEntityClass {
   @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll)
   optionAns: PollAnswer[];
 
-  @ManyToMany((type) => User, (user) => user.votedPoll, {
-    cascade: true,
-  })
-  @JoinTable()
-  votedUser: User[];
+  // @ManyToMany((type) => User, (user) => user.votedPoll, {
+  //   cascade: true,
+  // })
+  // @JoinTable()
+  // votedUser: User[];
 }

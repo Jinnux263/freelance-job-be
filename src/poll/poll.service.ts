@@ -114,6 +114,8 @@ export class PollService extends BaseService<
       await this.deleteById(pollId);
       return new BaseResponse(200, 'Delete poll successfully');
     } catch (err) {
+      console.log(err.message);
+
       throw new InternalServerErrorException('Internal Error');
     }
   }
@@ -137,6 +139,7 @@ export class PollService extends BaseService<
     return data as PollAnswer;
   }
 
+  // Todo: Khong can
   async updatePollOption(
     authUser: AuthUser,
     optionId: string,
@@ -170,7 +173,6 @@ export class PollService extends BaseService<
     });
   }
 
-  // Todo: khong can
   async deletePollOption(
     authUser: AuthUser,
     optionId: string,
@@ -193,6 +195,7 @@ export class PollService extends BaseService<
   }
 
   // Poll Interaction
+  // Todo: Khong cap nhat khi thuc hien lenh save
   async vote(
     authUser: AuthUser,
     pollId: string,
@@ -200,33 +203,26 @@ export class PollService extends BaseService<
   ): Promise<any> {
     const user = await this.userService.findSingleBy({ id: authUser.id });
 
-    const poll = await this.findSingleBy(
-      {
-        id: pollId,
-        optionAns: { id: optionId },
+    const pollOption = await this.pollAnswerRepository.findOne({
+      where: {
+        id: optionId,
       },
-      {
-        relations: {
-          optionAns: {
-            votedUser: true,
-          },
-        },
+      relations: {
+        votedUser: true,
       },
-    );
-    if (!poll) {
-      throw new NotFoundException('There is no poll or poll option');
+    });
+    if (!pollOption) {
+      throw new NotFoundException('There is no poll option');
     }
 
-    poll.optionAns.map((option) => {
-      if (option.id == optionId) {
-        option.votedUser.push(user);
-      }
-    });
-    console.log(poll);
+    pollOption.votedUser.push(user);
+    // console.log(pollOption);
 
-    return await this.pollRepository.save(poll);
-    return poll;
+    await this.pollAnswerRepository.save(pollOption);
+    return pollOption;
   }
+
+  // Todo: Khong cap nhat khi thuc hien lenh save
 
   async unvote(
     authUser: AuthUser,
