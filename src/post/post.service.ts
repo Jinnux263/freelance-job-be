@@ -157,10 +157,6 @@ export class PostService extends BaseService<
 
   async deletePost(authUser: AuthUser, id: string): Promise<BaseResponse> {
     try {
-      const post = await this.findById(id);
-      if (!post) {
-        throw new NotFoundException('Can not delete post');
-      }
       await this.deleteById(id);
       return new BaseResponse(200, 'Delete post successfully');
     } catch (err) {

@@ -118,10 +118,6 @@ export class PostRequestService extends BaseService<
     id: string,
   ): Promise<BaseResponse> {
     try {
-      const post = await this.findById(id);
-      if (!post) {
-        throw new NotFoundException('Can not delete post');
-      }
       await this.deleteById(id);
       return new BaseResponse(200, 'Delete post successfully');
     } catch (err) {

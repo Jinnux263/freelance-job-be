@@ -129,11 +129,6 @@ export class CommentService extends BaseService<
 
   async removeComment(authUser: AuthUser, id: string) {
     try {
-      const user = await this.userService.findSingleBy({ id: authUser.id });
-      if (!user) {
-        throw new NotFoundException('There is no user');
-      }
-
       const comment = await this.findById(id);
       if (!comment) {
         throw new NotFoundException('There is no comment');

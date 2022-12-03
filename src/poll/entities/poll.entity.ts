@@ -41,7 +41,7 @@ export class Poll extends BaseEntityClass {
   host: User;
 
   @OneToMany((type) => PollAnswer, (pollQuestion) => pollQuestion.poll, {
-    eager: true,
+    cascade: true,
   })
   optionAns: PollAnswer[];
 
