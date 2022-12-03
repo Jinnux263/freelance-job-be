@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthUser } from 'src/auth/auth-user.decorator';
+import { BaseResponse } from 'src/base/base.dto';
 import { PollService } from 'src/poll/poll.service';
 
 @ApiTags('Poll Request API')
@@ -43,5 +44,14 @@ export class PollController {
   @Delete(':id')
   removePoll(@Request() request: { user: AuthUser }, @Param('id') id: string) {
     return;
+  }
+
+  @Post(':pollId/vote/:voteId')
+  vote(
+    @Request() request: { user: AuthUser },
+    @Param('pollId') pollId: string,
+    @Param('voteId') voteId: string,
+  ): BaseResponse {
+    return new BaseResponse(200, 'Vote successfully');
   }
 }
