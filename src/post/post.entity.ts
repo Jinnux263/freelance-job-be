@@ -33,6 +33,9 @@ export class UserPost extends BaseEntityClass {
   @Column('varchar')
   type: PostType;
 
+  @Column('varchar')
+  hashtag: string;
+
   @ManyToOne((type) => User, (user) => user.createdPosts, {
     cascade: true,
   })

@@ -42,6 +42,14 @@ export class PostCreation {
   @IsString()
   postpicture: string;
 
+  @ApiProperty({
+    description: 'Post hashtag: string',
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  hashtag: string;
+
   constructor(init: Partial<PostCreation>) {
     return Object.assign(this, init);
   }

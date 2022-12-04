@@ -89,7 +89,7 @@ export class UserCreation {
     example: 'abc@gmail.com',
   })
   @IsEmail()
-  mail: string;
+  email: string;
 
   @ApiProperty({
     description: 'User Organization',
