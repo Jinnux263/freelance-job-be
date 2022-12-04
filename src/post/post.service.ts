@@ -58,16 +58,16 @@ export class PostService extends BaseService<
     if (adminUser.role !== UserRole.ADMIN) {
       throw new UnauthorizedException('User are not authorized');
     }
-    const post = await this.postRequestService.findSingleBy({
+    const postRequest = await this.postRequestService.findSingleBy({
       id: postRequestId,
       isApproved: false,
     });
-    if (!post) {
+    if (!postRequest) {
       throw new NotFoundException('There is no such post');
     }
 
     const newPost = new UserPost({
-      ...post,
+      ...postRequest,
     });
 
     try {
