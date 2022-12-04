@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthUser } from 'src/auth/auth-user.decorator';
@@ -72,11 +73,14 @@ export class ContactService extends BaseService<
         if (!contact) {
           throw new NotFoundException('There is no contact');
         }
-
+      } catch (err) {
+        throw new InternalServerErrorException(err.message);
+      }
+      try {
         await this.deleteById(id);
         return new BaseResponse(200, `Delete #${id} contact successfully`);
       } catch (err) {
-        throw new InternalServerErrorException('Internal Error');
+        throw new ConflictException(err.message);
       }
     });
   }

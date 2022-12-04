@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  UnauthorizedException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthUser } from 'src/auth/auth-user.decorator';
@@ -87,7 +89,7 @@ export class PollService extends BaseService<
     });
 
     if (checkValid.length === 0) {
-      throw new InternalServerErrorException('You can not do this task');
+      throw new UnauthorizedException('You can not do this task');
     }
 
     return await this.update(pollId, pollUpdatetion);
@@ -107,7 +109,7 @@ export class PollService extends BaseService<
     });
 
     if (checkValid.length === 0) {
-      throw new InternalServerErrorException('You can not do this task');
+      throw new UnauthorizedException('You can not do this task');
     }
 
     try {
@@ -116,7 +118,7 @@ export class PollService extends BaseService<
     } catch (err) {
       console.log(err.message);
 
-      throw new InternalServerErrorException('Internal Error');
+      throw new ConflictException('Can not delete poll');
     }
   }
 
@@ -139,7 +141,7 @@ export class PollService extends BaseService<
       await this.pollAnswerRepository.insert(data as any);
       return data as PollAnswer;
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      throw new ConflictException('Can not create poll option');
     }
   }
 
@@ -195,10 +197,14 @@ export class PollService extends BaseService<
       if (!pollOption) {
         throw new NotFoundException('Can not delete poll option');
       }
+    } catch (err) {
+      throw new InternalServerErrorException('Can not connect to database');
+    }
+    try {
       await this.pollAnswerRepository.delete(optionId);
       return new BaseResponse(200, 'Delete successfully');
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      throw new ConflictException('Can not delete poll option');
     }
   }
 
@@ -221,7 +227,6 @@ export class PollService extends BaseService<
     });
     if (pollOption) {
       return pollOption;
-      // throw new NotFoundException('There is no poll option');
     }
 
     const votePollOption = await this.pollAnswerRepository.findOne({
