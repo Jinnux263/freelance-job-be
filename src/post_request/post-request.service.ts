@@ -62,13 +62,16 @@ export class PostRequestService extends BaseService<
     authUser: AuthUser,
     id: string,
   ): Promise<PostRequest> {
-    const post = await this.findById(id, {
-      relations: {
-        owner: true,
+    const post = await this.findSingleBy(
+      { id, isApproved: false },
+      {
+        relations: {
+          owner: true,
+        },
       },
-    });
+    );
     if (!post) {
-      throw new NotFoundException('Could not find post');
+      throw new NotFoundException('There is no post');
     }
     return post;
   }
@@ -80,7 +83,15 @@ export class PostRequestService extends BaseService<
     const user = await this.userService.findSingleBy({ id: authUser.id });
 
     if (user.role === UserRole.ADMIN) {
-      return await this.findAll();
+      // return await this.findAll();
+      return await this.postRequestRepository.find({
+        where: {
+          isApproved: false,
+        },
+        relations: {
+          owner: true,
+        },
+      });
     } else {
       return await this.postRequestRepository.find({
         where: {
@@ -88,6 +99,7 @@ export class PostRequestService extends BaseService<
             id: authUser.id,
           },
           // ...options,
+          isApproved: false,
         },
         relations: {
           owner: true,
@@ -103,7 +115,7 @@ export class PostRequestService extends BaseService<
   ): Promise<PostRequest> {
     try {
       const post = await this.findById(id);
-      if (!post) {
+      if (!post || post.isApproved) {
         throw new NotFoundException('There is no post');
       }
       const newPost = await this.update(id, updatePost);
@@ -118,6 +130,11 @@ export class PostRequestService extends BaseService<
     id: string,
   ): Promise<BaseResponse> {
     try {
+      const post = await this.findById(id);
+      if (!post || post.isApproved) {
+        throw new NotFoundException('There is no post');
+      }
+
       await this.deleteById(id);
       return new BaseResponse(200, 'Delete post successfully');
     } catch (err) {
