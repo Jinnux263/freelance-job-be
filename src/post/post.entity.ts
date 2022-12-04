@@ -33,7 +33,7 @@ export class UserPost extends BaseEntityClass {
   @Column('varchar')
   type: PostType;
 
-  @Column('varchar')
+  @Column('text')
   hashtag: string;
 
   @ManyToOne((type) => User, (user) => user.createdPosts, {

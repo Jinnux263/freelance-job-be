@@ -1,5 +1,4 @@
 import { BaseEntityClass } from 'src/base/base.entity';
-import { Comment } from 'src/comment/entities/comment.entity';
 import { User } from 'src/user/user.entity';
 import {
   Entity,
@@ -38,7 +37,7 @@ export class PostRequest extends BaseEntityClass {
   @Column('varchar')
   type: PostType;
 
-  @Column('varchar')
+  @Column('text')
   hashtag: string;
 
   @Column({

@@ -44,11 +44,10 @@ export class PostRequestCreation {
 
   @ApiProperty({
     description: 'Post hashtag',
-    type: String,
+    type: Array<String>,
   })
   @IsOptional()
-  @IsString()
-  hashtag: string;
+  hashtag: string[];
 
   constructor(init: Partial<PostRequestCreation>) {
     return Object.assign(this, init);

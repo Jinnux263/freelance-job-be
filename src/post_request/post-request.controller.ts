@@ -31,7 +31,8 @@ export class PostRequestController {
   createPost(
     @Request() request: { user: AuthUser },
     @Body() body: PostRequestCreation,
-  ): Promise<PostRequest> {
+    // ): Promise<PostRequest> {
+  ): Promise<any> {
     return this.postRequestService.createPostRequest(request.user, body);
   }
 

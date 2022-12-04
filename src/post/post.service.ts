@@ -31,24 +31,25 @@ export class PostService extends BaseService<
   ) {
     super(postRepository, IdPrefix.POST);
   }
-  async createPost(
-    authUser: AuthUser,
-    postCreation: PostCreation,
-  ): Promise<UserPost> {
-    try {
-      const user = await this.userService.findSingleBy({ id: authUser.id });
-      const newPost = new UserPost({
-        type: PostType.PUBLIC,
-        ...postCreation,
-        owner: user,
-      });
-      const createdPost = await this.create(newPost);
-
-      return createdPost;
-    } catch (err) {
-      throw new InternalServerErrorException('Can not create new Post');
-    }
-  }
+  // async createPost(
+  //   authUser: AuthUser,
+  //   postCreation: PostCreation,
+  // ): Promise<UserPost> {
+  //   try {
+  //     const user = await this.userService.findSingleBy({ id: authUser.id });
+  //     const newPost = new UserPost({
+  //       type: PostType.PUBLIC,
+  //       ...postCreation,
+  //       owner: user,
+  //       hashtag: JSON.stringify(postCreation.hashtag),
+  //     });
+  //     const createdPost = await this.create(newPost);
+  //     createdPost.hashtag = JSON.parse(createdPost.hashtag);
+  //     return createdPost;
+  //   } catch (err) {
+  //     throw new InternalServerErrorException('Can not create new Post');
+  //   }
+  // }
   async approvePost(
     authUser: AuthUser,
     postRequestId: string,
@@ -72,6 +73,7 @@ export class PostService extends BaseService<
     try {
       const createdPost = await this.create(newPost);
       await this.postRequestService.approvePostRequest(authUser, postRequestId);
+      createdPost.hashtag = JSON.parse(createdPost.hashtag);
       return createdPost;
     } catch (err) {
       // console.log(err.message);
@@ -99,6 +101,8 @@ export class PostService extends BaseService<
     if (!post) {
       throw new NotFoundException('Could not find post');
     }
+    post.hashtag = JSON.parse(post.hashtag);
+
     return post;
   }
 
@@ -107,7 +111,16 @@ export class PostService extends BaseService<
       where: {},
       relations: { owner: true },
     });
-    return posts;
+    try {
+      posts.map((post) => {
+        if (post.hashtag) {
+          post.hashtag = JSON.parse(post.hashtag);
+        }
+      });
+      return posts;
+    } catch (err) {
+      console.log(err.message);
+    }
   }
 
   async getLikesOfPost(postId: string): Promise<UserPost> {
@@ -119,6 +132,7 @@ export class PostService extends BaseService<
         likeUser: true,
       },
     });
+    post.hashtag = JSON.parse(post.hashtag);
 
     return post;
   }
@@ -135,6 +149,8 @@ export class PostService extends BaseService<
     if (!post) {
       throw new NotFoundException('There is no post');
     }
+    post.hashtag = JSON.parse(post.hashtag);
+
     return post;
   }
 

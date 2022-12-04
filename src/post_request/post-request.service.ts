@@ -41,15 +41,22 @@ export class PostRequestService extends BaseService<
   ): Promise<PostRequest> {
     try {
       const user = await this.userService.findSingleBy({ id: authUser.id });
+      if (!postCreation.hashtag) {
+        postCreation.hashtag = [];
+      }
       const newPost = new PostRequest({
         type: PostType.PUBLIC,
         ...postCreation,
         owner: user,
         isApproved: false,
+        hashtag: JSON.stringify(postCreation.hashtag),
       });
 
+      // console.log(newPost);
+      // return newPost;
       const createdPost = await this.create(newPost);
 
+      createdPost.hashtag = JSON.parse(createdPost.hashtag);
       return createdPost;
     } catch (err) {
       console.log(err.message);
@@ -73,6 +80,7 @@ export class PostRequestService extends BaseService<
     if (!post) {
       throw new NotFoundException('There is no post');
     }
+    post.hashtag = JSON.parse(post.hashtag);
     return post;
   }
 
@@ -84,7 +92,7 @@ export class PostRequestService extends BaseService<
 
     if (user.role === UserRole.ADMIN) {
       // return await this.findAll();
-      return await this.postRequestRepository.find({
+      const res = await this.postRequestRepository.find({
         where: {
           isApproved: false,
         },
@@ -92,8 +100,12 @@ export class PostRequestService extends BaseService<
           owner: true,
         },
       });
+      res.map((postReq) => {
+        postReq.hashtag = JSON.parse(postReq.hashtag);
+      });
+      return res;
     } else {
-      return await this.postRequestRepository.find({
+      const res = await this.postRequestRepository.find({
         where: {
           owner: {
             id: authUser.id,
@@ -105,6 +117,10 @@ export class PostRequestService extends BaseService<
           owner: true,
         },
       });
+      res.map((postReq) => {
+        postReq.hashtag = JSON.parse(postReq.hashtag);
+      });
+      return res;
     }
   }
 
@@ -113,6 +129,9 @@ export class PostRequestService extends BaseService<
     id: string,
     updatePost: PostRequestUpdation,
   ): Promise<PostRequest> {
+    if (!updatePost.hashtag) {
+      updatePost.hashtag = [];
+    }
     try {
       const post = await this.findById(id);
       if (!post || post.isApproved) {

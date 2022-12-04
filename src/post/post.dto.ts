@@ -47,8 +47,7 @@ export class PostCreation {
     type: String,
   })
   @IsOptional()
-  @IsString()
-  hashtag: string;
+  hashtag: string[];
 
   constructor(init: Partial<PostCreation>) {
     return Object.assign(this, init);
