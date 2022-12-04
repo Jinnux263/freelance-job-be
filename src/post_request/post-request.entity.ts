@@ -38,6 +38,9 @@ export class PostRequest extends BaseEntityClass {
   @Column('varchar')
   type: PostType;
 
+  @Column('varchar')
+  hashtag: string;
+
   @Column({
     type: 'bool',
     default: false,

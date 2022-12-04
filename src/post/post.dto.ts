@@ -43,7 +43,7 @@ export class PostCreation {
   postpicture: string;
 
   @ApiProperty({
-    description: 'Post hashtag: string',
+    description: 'Post hashtag',
     type: String,
   })
   @IsOptional()
