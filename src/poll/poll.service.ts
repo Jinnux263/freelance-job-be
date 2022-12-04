@@ -126,52 +126,60 @@ export class PollService extends BaseService<
     pollId: string,
     pollAnswerCreation: PollAnswerCreation,
   ): Promise<PollAnswer> {
-    const poll = await this.findById(pollId);
-    pollAnswerCreation['poll'] = poll;
+    try {
+      const poll = await this.findById(pollId);
+      pollAnswerCreation['poll'] = poll;
 
-    const data: any = this.pollAnswerRepository.create(
-      pollAnswerCreation as any,
-    );
-    data['createdAt'] = new Date();
-    data['updatedAt'] = new Date();
-    data['id'] = data.id || generateUUID(IdPrefix.POLL_OPTION);
-    await this.pollAnswerRepository.insert(data as any);
-    return data as PollAnswer;
-  }
-
-  // Todo: Khong can
-  async updatePollOption(
-    authUser: AuthUser,
-    optionId: string,
-    pollAnswerUpdation: PollAnswerUpdation,
-  ): Promise<any> {
-    const pollAnswer = await this.pollAnswerRepository.findOne({
-      where: {
-        id: optionId,
-      },
-      relationLoadStrategy: 'query',
-    });
-    if (!pollAnswer) {
-      throw new NotFoundException('There is no option');
+      const data: any = this.pollAnswerRepository.create(
+        pollAnswerCreation as any,
+      );
+      data['createdAt'] = new Date();
+      data['updatedAt'] = new Date();
+      data['id'] = data.id || generateUUID(IdPrefix.POLL_OPTION);
+      await this.pollAnswerRepository.insert(data as any);
+      return data as PollAnswer;
+    } catch (err) {
+      throw new InternalServerErrorException('Internal Error');
     }
-
-    await this.pollAnswerRepository.update(optionId, {
-      answerOption: pollAnswerUpdation.answerOption,
-    });
-    return pollAnswer;
   }
 
-  // Todo: Khong can
-  async getAllPollOptions(authUser: AuthUser, pollId: string): Promise<any> {
-    return await this.pollAnswerRepository.find({
-      where: {
-        poll: { id: pollId },
-      },
-      relations: {
-        poll: true,
-      },
-    });
-  }
+  // // Todo: Khong can
+  // async updatePollOption(
+  //   authUser: AuthUser,
+  //   optionId: string,
+  //   pollAnswerUpdation: PollAnswerUpdation,
+  // ): Promise<any> {
+  //   try {
+  //     const pollAnswer = await this.pollAnswerRepository.findOne({
+  //       where: {
+  //         id: optionId,
+  //       },
+  //       relationLoadStrategy: 'query',
+  //     });
+  //     if (!pollAnswer) {
+  //       throw new NotFoundException('There is no option');
+  //     }
+
+  //     await this.pollAnswerRepository.update(optionId, {
+  //       answerOption: pollAnswerUpdation.answerOption,
+  //     });
+  //     return pollAnswer;
+  //   } catch (err) {
+  //     throw new InternalServerErrorException('Interal Error');
+  //   }
+  // }
+
+  // // Todo: Khong can
+  // async getAllPollOptions(authUser: AuthUser, pollId: string): Promise<any> {
+  //   return await this.pollAnswerRepository.find({
+  //     where: {
+  //       poll: { id: pollId },
+  //     },
+  //     relations: {
+  //       poll: true,
+  //     },
+  //   });
+  // }
 
   async deletePollOption(
     authUser: AuthUser,
@@ -202,7 +210,6 @@ export class PollService extends BaseService<
     optionId: string,
   ): Promise<any> {
     const user = await this.userService.findSingleBy({ id: authUser.id });
-
     const pollOption = await this.pollAnswerRepository.findOne({
       where: {
         id: optionId,
@@ -214,16 +221,13 @@ export class PollService extends BaseService<
     if (!pollOption) {
       throw new NotFoundException('There is no poll option');
     }
-
     pollOption.votedUser.push(user);
     // console.log(pollOption);
-
     await this.pollAnswerRepository.save(pollOption);
     return pollOption;
   }
 
   // Todo: Khong cap nhat khi thuc hien lenh save
-
   async unvote(
     authUser: AuthUser,
     pollId: string,

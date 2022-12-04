@@ -7,6 +7,7 @@ export enum IdPrefix {
   COMMENT = 'comment',
   POLL = 'poll',
   POLL_OPTION = 'poll-option',
+  CONTACT = 'contact',
 }
 
 export function omitUserPassword(user: User): User {

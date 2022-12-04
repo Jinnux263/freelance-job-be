@@ -113,15 +113,12 @@ export class CommentService extends BaseService<
       if (comment.owner.id != authUser.id) {
         throw new UnauthorizedException('There is no user');
       }
-      try {
-        const newComment = await this.commentRepository.update(
-          id,
-          updateCommentDto,
-        );
-        return updateCommentDto;
-      } catch (e) {
-        console.log(e.message);
-      }
+
+      const newComment = await this.commentRepository.update(
+        id,
+        updateCommentDto,
+      );
+      return updateCommentDto;
     } catch (err) {
       throw new InternalServerErrorException('Internal Error');
     }

@@ -17,33 +17,35 @@ import { Comment } from 'src/comment/entities/comment.entity';
 import { PostRequest } from 'src/post_request/post-request.entity';
 import { PostRequestModule } from 'src/post_request/post-request.module';
 import { PollAnswer } from 'src/poll/entities/poll-answer.entity';
+import { ContactModule } from './contact/contact.module';
+import { Contact } from 'src/contact/entities/contact.entity';
 
 function DatabaseOrmModule(): DynamicModule {
   dotenv.config();
 
   return TypeOrmModule.forRoot({
     type: 'mysql',
-    url: 'mysql://c4yvvv5bvrk8b2rr27sh:pscale_pw_xMWHGFWCgszDAXPSlqyqDrZHyknFTy5gHPcispLPL4k@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
-
     port: parseInt(get(process.env, 'SQL_PORT', '3306')),
-    entities: [User, UserPost, Poll, Comment, PostRequest, PollAnswer],
-    ssl: {
-      rejectUnauthorized: true,
-      // ca: process.env.SSL,
-    },
+    entities: [User, UserPost, Poll, Comment, PostRequest, PollAnswer, Contact],
+
+    // url: 'mysql://c4yvvv5bvrk8b2rr27sh:pscale_pw_xMWHGFWCgszDAXPSlqyqDrZHyknFTy5gHPcispLPL4k@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
+    // ssl: {
+    //   rejectUnauthorized: true,
+    //   // ca: process.env.SSL,
+    // },
 
     // host: get(process.env, 'SQL_HOST', 'ap-southeast.connect.psdb.cloud'),
     // username: 'c4yvvv5bvrk8b2rr27sh',
     // password: 'pscale_pw_xMWHGFWCgszDAXPSlqyqDrZHyknFTy5gHPcispLPL4k',
-    // // host: get(process.env, 'SQL_HOST', '127.0.0.1'),
-    // // username: 'root',
-    // // password: '',
-    // charset: 'utf8mb4',
-    // database: 'myfreelancedb',
-    // synchronize: true,
-    // extra: {
-    //   charset: 'utf8mb4_unicode_ci',
-    // },
+    host: get(process.env, 'SQL_HOST', '127.0.0.1'),
+    username: 'root',
+    password: '',
+    charset: 'utf8mb4',
+    database: 'myfreelancedb',
+    synchronize: true,
+    extra: {
+      charset: 'utf8mb4_unicode_ci',
+    },
   });
 }
 @Module({
@@ -56,6 +58,7 @@ function DatabaseOrmModule(): DynamicModule {
     CommentModule,
     LikeModule,
     PostRequestModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -83,4 +83,13 @@ export class PollController {
   ): any {
     return this.pollService.vote(request.user, pollId, optionId);
   }
+
+  @Post(':pollId/unvote/:optionId')
+  unvote(
+    @Request() request: { user: AuthUser },
+    @Param('pollId') pollId: string,
+    @Param('optionId') optionId: string,
+  ): any {
+    return this.pollService.unvote(request.user, pollId, optionId);
+  }
 }
