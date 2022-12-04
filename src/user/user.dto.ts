@@ -28,6 +28,14 @@ export class UserCreation {
   username: string;
 
   @ApiProperty({
+    description: 'User avatar link',
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  avatar: string;
+
+  @ApiProperty({
     description: 'Initial password',
     type: String,
     example: 'p@ssw0rd',
@@ -115,6 +123,87 @@ export class UserCreation {
   }
 }
 
-export class UserUpdation extends UserCreation {}
+export class UserUpdation {
+  @ApiProperty({
+    description: 'User firstName',
+    type: String,
+    example: 'David',
+  })
+  @IsString()
+  @IsOptional()
+  firstName: string;
 
-export class UserSelfUpdation extends UserCreation {}
+  @ApiProperty({
+    description: 'User avatar link',
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  avatar: string;
+
+  @ApiProperty({
+    description: 'User lastName',
+    type: String,
+    required: false,
+    example: 'Laid',
+  })
+  @IsString()
+  @IsOptional()
+  lastName: string;
+
+  @ApiProperty({
+    description: 'User address',
+    type: String,
+    required: false,
+    example: '17 Ems Road, CSE, Ho Chi Minh city',
+  })
+  @IsOptional()
+  @IsString()
+  address: string;
+
+  @ApiProperty({
+    description: 'User city',
+    type: String,
+    required: false,
+    example: 'Ho Chi Minh city University of Technology',
+  })
+  @IsOptional()
+  @IsString()
+  city: string;
+
+  @ApiProperty({
+    description: 'User country',
+    type: String,
+    required: false,
+    example: 'Viet Nam',
+  })
+  @IsOptional()
+  @IsString()
+  country: string;
+
+  @ApiProperty({
+    description: 'User Email',
+    type: String,
+    required: false,
+    example: 'abc@gmail.com',
+  })
+  @IsEmail()
+  @IsOptional()
+  email: string;
+
+  @ApiProperty({
+    description: 'User Organization',
+    type: String,
+    required: false,
+    example: 'CSE, Ho Chi Minh city University of Technology',
+  })
+  @IsOptional()
+  @IsString()
+  organization: string;
+
+  constructor(init: Partial<UserUpdation>) {
+    return Object.assign(this, init);
+  }
+}
+
+export class UserSelfUpdation extends UserUpdation {}

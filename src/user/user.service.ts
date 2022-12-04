@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -71,6 +72,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
     const filterUsers = users.map((user) =>
       pick(user, [
         'id',
+        'username',
         'avatar',
         'organization',
         'firstName',
@@ -127,7 +129,6 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
           if (isEmpty(updateUser)) {
             throw new NotFoundException(`There is no user with id ${userId}`);
           }
-
           return this.update(userId, userUpdate);
         },
       );

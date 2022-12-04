@@ -2,7 +2,10 @@ import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
 import { generateUUID } from 'src/utils';
 import { BaseEntityClass } from './base.entity';
 import { isEmpty } from 'lodash';
-import { NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 export class BaseService<T extends BaseEntityClass, TCreation, TQueryRequest> {
   constructor(
@@ -43,7 +46,11 @@ export class BaseService<T extends BaseEntityClass, TCreation, TQueryRequest> {
   }
 
   async update(id: string, req: any): Promise<T> {
-    await this.repository.update(id, req);
+    try {
+      await this.repository.update(id, req);
+    } catch (error) {
+      throw new InternalServerErrorException(`Update failed`);
+    }
     return req as T;
   }
 

@@ -12,6 +12,10 @@ import {
   JoinTable,
 } from 'typeorm';
 
+export enum PollType {
+  SINGLE_CHOICE = 'single',
+  MULTI_CHOICE = 'multi',
+}
 @Entity()
 export class Poll extends BaseEntityClass {
   @ApiProperty({
@@ -34,6 +38,13 @@ export class Poll extends BaseEntityClass {
   })
   @Column('text')
   description: string;
+
+  @ApiProperty({
+    description: 'Poll description',
+    enum: PollType,
+  })
+  @Column('text')
+  pollType: PollType;
 
   @ManyToOne((type) => User, {
     cascade: true,

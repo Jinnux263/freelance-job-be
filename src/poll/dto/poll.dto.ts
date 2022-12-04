@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { PollAnswer } from 'src/poll/entities/poll-answer.entity';
+import { PollType } from 'src/poll/entities/poll.entity';
 import { User } from 'src/user/user.entity';
 
 export class PollRequestDto {
@@ -26,7 +26,15 @@ export class PollCreation {
     example: 'Cac ban muon lam gi hom nay?',
   })
   @IsString()
+  @IsNotEmpty()
   title: string;
+
+  @ApiProperty({
+    description: 'Poll type',
+    enum: PollType,
+  })
+  @IsNotEmpty()
+  pollType: PollType;
 
   @ApiProperty({
     description: 'Description for Poll',
@@ -34,11 +42,9 @@ export class PollCreation {
     required: false,
     example: 'Co the tao them cac lua chon neu ban thich',
   })
-  @IsOptional()
   @IsString()
-  description?: string;
-
-  // optionAns?: PollAnswer[];
+  @IsNotEmpty()
+  description: string;
 
   constructor(init: Partial<PollCreation>) {
     return Object.assign(this, init);
