@@ -30,23 +30,23 @@ export class ContactService extends BaseService<
     super(contactRepository, IdPrefix.CONTACT);
   }
 
-  createContact(createContactDto: CreateContactDto) {
-    return 'This action adds a new contact';
+  async createContact(createContactDto: CreateContactDto) {
+    return await this.create(createContactDto);
   }
 
-  findAllContact(authUser: AuthUser) {
+  async findAllContact(authUser: AuthUser) {
     return this.userService.verifyAndPerformAdminAction(authUser, async () => {
       return this.findAll();
     });
   }
 
-  findOneContact(authUser: AuthUser, id: string) {
+  async findOneContact(authUser: AuthUser, id: string) {
     return this.userService.verifyAndPerformAdminAction(authUser, async () => {
-      return `This action returns a #${id} contact`;
+      return await this.findById(id);
     });
   }
 
-  updateContact(
+  async updateContact(
     authUser: AuthUser,
     id: string,
     updateContactDto: UpdateContactDto,
@@ -57,19 +57,15 @@ export class ContactService extends BaseService<
         if (!contact) {
           throw new NotFoundException('There is no contact');
         }
-
-        const newComment = await this.contactRepository.update(
-          id,
-          updateContactDto,
-        );
+        await this.update(id, updateContactDto);
         return updateContactDto;
       } catch (err) {
-        throw new InternalServerErrorException('Internal Error');
+        throw new InternalServerErrorException(err.message);
       }
     });
   }
 
-  removeContact(authUser: AuthUser, id: string) {
+  async removeContact(authUser: AuthUser, id: string) {
     return this.userService.verifyAndPerformAdminAction(authUser, async () => {
       try {
         const contact = await this.findById(id);
@@ -78,7 +74,7 @@ export class ContactService extends BaseService<
         }
 
         await this.deleteById(id);
-        return new BaseResponse(200, 'Delete #${id} contact successfully');
+        return new BaseResponse(200, `Delete #${id} contact successfully`);
       } catch (err) {
         throw new InternalServerErrorException('Internal Error');
       }

@@ -86,7 +86,7 @@ export class PollService extends BaseService<
       },
     });
 
-    if (!checkValid) {
+    if (checkValid.length === 0) {
       throw new InternalServerErrorException('You can not do this task');
     }
 
@@ -106,7 +106,7 @@ export class PollService extends BaseService<
       },
     });
 
-    if (!checkValid) {
+    if (checkValid.length === 0) {
       throw new InternalServerErrorException('You can not do this task');
     }
 
@@ -213,18 +213,32 @@ export class PollService extends BaseService<
     const pollOption = await this.pollAnswerRepository.findOne({
       where: {
         id: optionId,
+        votedUser: { id: authUser.id },
       },
       relations: {
         votedUser: true,
       },
     });
-    if (!pollOption) {
+    if (pollOption) {
+      return pollOption;
+      // throw new NotFoundException('There is no poll option');
+    }
+
+    const votePollOption = await this.pollAnswerRepository.findOne({
+      where: {
+        id: optionId,
+      },
+      relations: {
+        votedUser: true,
+      },
+    });
+    if (!votePollOption) {
       throw new NotFoundException('There is no poll option');
     }
-    pollOption.votedUser.push(user);
-    // console.log(pollOption);
-    await this.pollAnswerRepository.save(pollOption);
-    return pollOption;
+    // console.log(votePollOption);
+
+    votePollOption.votedUser.push(user);
+    return await this.pollAnswerRepository.save(votePollOption);
   }
 
   // Todo: Khong cap nhat khi thuc hien lenh save
@@ -233,35 +247,61 @@ export class PollService extends BaseService<
     pollId: string,
     optionId: string,
   ): Promise<any> {
-    const user = await this.userService.findSingleBy({ id: authUser.id });
+    // const poll = await this.findSingleBy(
+    //   {
+    //     id: pollId,
+    //     optionAns: { id: optionId },
+    //   },
+    //   {
+    //     relations: {
+    //       optionAns: {
+    //         votedUser: true,
+    //       },
+    //     },
+    //   },
+    // );
+    // if (!poll) {
+    //   throw new NotFoundException('There is no poll or poll option');
+    // }
 
-    const poll = await this.findSingleBy(
-      {
-        id: pollId,
-        optionAns: { id: optionId },
-      },
-      {
-        relations: {
-          optionAns: {
-            votedUser: true,
-          },
-        },
-      },
-    );
-    if (!poll) {
-      throw new NotFoundException('There is no poll or poll option');
-    }
-
-    poll.optionAns.map((option) => {
-      if (option.id == optionId) {
-        option.votedUser = option.votedUser.filter(
-          (user) => user.id != authUser.id,
-        );
-      }
-    });
+    // poll.optionAns.map((option) => {
+    //   if (option.id == optionId) {
+    //     option.votedUser = option.votedUser.filter(
+    //       (user) => user.id != authUser.id,
+    //     );
+    //   }
+    // });
     // console.log(poll);
 
-    await this.pollRepository.save(poll);
-    return poll;
+    // return await this.pollRepository.save(poll);
+
+    const pollOption = await this.pollAnswerRepository.findOne({
+      where: {
+        id: optionId,
+        votedUser: { id: authUser.id },
+      },
+      relations: {
+        votedUser: true,
+      },
+    });
+    if (!pollOption) {
+      // return pollOption;
+      throw new NotFoundException('You have not voted this option yet');
+    }
+
+    const votePollOption = await this.pollAnswerRepository.findOne({
+      where: {
+        id: optionId,
+      },
+      relations: {
+        votedUser: true,
+      },
+    });
+
+    votePollOption.votedUser = votePollOption.votedUser.filter(
+      (user) => user.id != authUser.id,
+    );
+
+    return await this.pollAnswerRepository.save(votePollOption);
   }
 }

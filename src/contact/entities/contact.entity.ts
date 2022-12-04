@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntityClass } from 'src/base/base.entity';
-import { Column, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
+@Entity()
 export class Contact extends BaseEntityClass {
   @ApiProperty({
     description: 'Poll ID',
@@ -30,4 +31,9 @@ export class Contact extends BaseEntityClass {
   })
   @Column('varchar', { nullable: false })
   phoneNumber: string;
+
+  constructor(init: Partial<Contact>) {
+    super();
+    return Object.assign(this, init);
+  }
 }
