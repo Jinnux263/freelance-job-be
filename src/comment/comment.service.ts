@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,6 +11,7 @@ import { BaseResponse } from 'src/base/base.dto';
 import { BaseService } from 'src/base/base.service';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { PostService } from 'src/post/post.service';
+import { UserRole } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { IdPrefix } from 'src/utils';
 import { Repository } from 'typeorm';
@@ -87,7 +89,14 @@ export class CommentService extends BaseService<
   }
 
   async findOne(id: string) {
-    const comment = await this.findById(id);
+    const comment = await this.findSingleBy(
+      { id },
+      {
+        relations: {
+          owner: true,
+        },
+      },
+    );
     if (!comment) {
       throw new NotFoundException('Could not find comment');
     }
@@ -99,45 +108,55 @@ export class CommentService extends BaseService<
     id: string,
     updateCommentDto: UpdateCommentDto,
   ) {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+    const comment = await this.findSingleBy(
+      { id },
+      {
+        relations: {
+          owner: true,
+        },
+      },
+    );
+    if (!comment) {
+      throw new NotFoundException('There is no comment');
+    }
+    if (comment.owner.id != authUser.id && user.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('You can not do this action');
+    }
     try {
-      const user = await this.userService.findSingleBy({ id: authUser.id });
-      if (!user) {
-        throw new NotFoundException('There is no user');
-      }
-
-      const comment = await this.findById(id);
-      if (!comment) {
-        throw new NotFoundException('There is no comment');
-      }
-
-      if (comment.owner.id != authUser.id) {
-        throw new UnauthorizedException('There is no user');
-      }
-
       const newComment = await this.commentRepository.update(
         id,
         updateCommentDto,
       );
       return updateCommentDto;
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      throw new ConflictException('Update comment failed');
     }
   }
 
   async removeComment(authUser: AuthUser, id: string) {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+    const comment = await this.findSingleBy(
+      { id },
+      {
+        relations: {
+          owner: true,
+        },
+      },
+    );
+    if (!comment) {
+      throw new NotFoundException('There is no comment');
+    }
+    if (comment.owner.id != authUser.id && user.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('You can not do this action');
+    }
     try {
-      const comment = await this.findById(id);
-      if (!comment) {
-        throw new NotFoundException('There is no comment');
-      }
-
-      if (comment.owner.id != authUser.id) {
-        throw new UnauthorizedException('There is no user');
-      }
       await this.deleteById(id);
       return new BaseResponse(200, 'Delete comment successfully');
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      console.log(err.message);
+
+      throw new ConflictException('Delete comment failed');
     }
   }
 

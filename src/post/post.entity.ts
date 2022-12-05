@@ -37,7 +37,7 @@ export class UserPost extends BaseEntityClass {
   hashtag: string;
 
   @ManyToOne((type) => User, (user) => user.createdPosts, {
-    cascade: true,
+    onDelete: 'SET NULL',
   })
   owner: User;
 
@@ -45,7 +45,7 @@ export class UserPost extends BaseEntityClass {
   comment: Comment[];
 
   @ManyToMany((type) => User, (user) => user.likedPosts, {
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinTable()
   likeUser: User[];

@@ -13,24 +13,24 @@ export class Comment extends BaseEntityClass {
   comment: string;
 
   @ManyToOne((type) => UserPost, (post) => post.comment, {
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   post: UserPost;
 
   @ManyToOne((type) => Comment, (comment) => comment.replyComment, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   replyToComment: Comment;
 
   @OneToMany((type) => Comment, (comment) => comment.replyToComment, {
     nullable: true,
-    cascade: true,
   })
   replyComment: Comment[];
 
   @ManyToOne((type) => User, (user) => user.comments, {
     nullable: false,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   owner: User;
 
