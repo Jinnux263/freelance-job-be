@@ -21,6 +21,7 @@ import { UserService } from 'src/user/user.service';
 import { generateUUID, IdPrefix } from 'src/utils';
 import { Repository } from 'typeorm';
 import { BaseResponse } from 'src/base/base.dto';
+import { UserRole } from 'src/user/user.entity';
 
 @Injectable()
 export class PollService extends BaseService<
@@ -128,9 +129,25 @@ export class PollService extends BaseService<
     pollId: string,
     pollAnswerCreation: PollAnswerCreation,
   ): Promise<PollAnswer> {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+    const poll = await this.findSingleBy(
+      { id: pollId },
+      {
+        relations: {
+          host: true,
+        },
+      },
+    );
+    if (!poll) {
+      throw new NotFoundException('There is no poll');
+    }
+    if (poll.host.id != authUser.id && user.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('You can not do this action');
+    }
+
     try {
-      const poll = await this.findById(pollId);
-      pollAnswerCreation['poll'] = poll;
+      const newPoll = await this.findById(pollId);
+      pollAnswerCreation['poll'] = newPoll;
 
       const data: any = this.pollAnswerRepository.create(
         pollAnswerCreation as any,
@@ -171,34 +188,32 @@ export class PollService extends BaseService<
   //   }
   // }
 
-  // // Todo: Khong can
-  // async getAllPollOptions(authUser: AuthUser, pollId: string): Promise<any> {
-  //   return await this.pollAnswerRepository.find({
-  //     where: {
-  //       poll: { id: pollId },
-  //     },
-  //     relations: {
-  //       poll: true,
-  //     },
-  //   });
-  // }
-
   async deletePollOption(
     authUser: AuthUser,
     optionId: string,
   ): Promise<BaseResponse> {
     try {
+      const user = await this.userService.findSingleBy({ id: authUser.id });
       const pollOption = await this.pollAnswerRepository.findOne({
         where: {
           id: optionId,
+        },
+        relations: {
+          poll: true,
         },
         relationLoadStrategy: 'query',
       });
       if (!pollOption) {
         throw new NotFoundException('Can not delete poll option');
       }
+      if (
+        pollOption.poll.host.id != authUser.id &&
+        user.role !== UserRole.ADMIN
+      ) {
+        throw new UnauthorizedException('You can not do this action');
+      }
     } catch (err) {
-      throw new InternalServerErrorException('Can not connect to database');
+      throw new InternalServerErrorException('Can not delete poll option');
     }
     try {
       await this.pollAnswerRepository.delete(optionId);
@@ -252,34 +267,6 @@ export class PollService extends BaseService<
     pollId: string,
     optionId: string,
   ): Promise<any> {
-    // const poll = await this.findSingleBy(
-    //   {
-    //     id: pollId,
-    //     optionAns: { id: optionId },
-    //   },
-    //   {
-    //     relations: {
-    //       optionAns: {
-    //         votedUser: true,
-    //       },
-    //     },
-    //   },
-    // );
-    // if (!poll) {
-    //   throw new NotFoundException('There is no poll or poll option');
-    // }
-
-    // poll.optionAns.map((option) => {
-    //   if (option.id == optionId) {
-    //     option.votedUser = option.votedUser.filter(
-    //       (user) => user.id != authUser.id,
-    //     );
-    //   }
-    // });
-    // console.log(poll);
-
-    // return await this.pollRepository.save(poll);
-
     const pollOption = await this.pollAnswerRepository.findOne({
       where: {
         id: optionId,

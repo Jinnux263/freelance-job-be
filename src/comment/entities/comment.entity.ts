@@ -14,12 +14,14 @@ export class Comment extends BaseEntityClass {
 
   @ManyToOne((type) => UserPost, (post) => post.comment, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   post: UserPost;
 
   @ManyToOne((type) => Comment, (comment) => comment.replyComment, {
     nullable: true,
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   replyToComment: Comment;
 
@@ -30,7 +32,8 @@ export class Comment extends BaseEntityClass {
 
   @ManyToOne((type) => User, (user) => user.comments, {
     nullable: false,
-    onDelete: 'CASCADE',
+    // onDelete: 'CASCADE',
+    // onUpdate: 'CASCADE',
   })
   owner: User;
 

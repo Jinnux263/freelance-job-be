@@ -48,6 +48,7 @@ export class PostRequest extends BaseEntityClass {
 
   @ManyToOne((type) => User, (user) => user.createdPostRequest, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     eager: true,
   })
   owner: User;

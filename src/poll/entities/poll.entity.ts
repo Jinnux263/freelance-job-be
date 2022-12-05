@@ -47,7 +47,8 @@ export class Poll extends BaseEntityClass {
   pollType: PollType;
 
   @ManyToOne((type) => User, {
-    onDelete: 'SET NULL',
+    // onDelete: 'SET NULL',
+    eager: true,
   })
   host: User;
 

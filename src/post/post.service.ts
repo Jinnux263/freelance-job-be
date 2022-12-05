@@ -1,7 +1,7 @@
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import {
   Injectable,
-  InternalServerErrorException,
+  ConflictException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -15,7 +15,6 @@ import { UserService } from 'src/user/user.service';
 import { BaseResponse } from 'src/base/base.dto';
 import { UserRole } from 'src/user/user.entity';
 import { PostRequestService } from 'src/post_request/post-request.service';
-import { APPROVE_STATUS } from 'src/post_request/post-request.entity';
 
 @Injectable()
 export class PostService extends BaseService<
@@ -47,7 +46,7 @@ export class PostService extends BaseService<
   //     createdPost.hashtag = JSON.parse(createdPost.hashtag);
   //     return createdPost;
   //   } catch (err) {
-  //     throw new InternalServerErrorException('Can not create new Post');
+  //     throw new ConflictException('Can not create new Post');
   //   }
   // }
   async approvePost(
@@ -77,7 +76,7 @@ export class PostService extends BaseService<
       return createdPost;
     } catch (err) {
       // console.log(err.message);
-      throw new InternalServerErrorException('Can not create new Post');
+      throw new ConflictException('Can not create new Post');
     }
   }
 
@@ -159,6 +158,21 @@ export class PostService extends BaseService<
     id: string,
     updatePost: PostUpdation,
   ): Promise<UserPost> {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+    const post = await this.findSingleBy(
+      { id: id },
+      {
+        relations: {
+          owner: true,
+        },
+      },
+    );
+    if (!post) {
+      throw new NotFoundException('There is no post');
+    }
+    if (post.owner.id != authUser.id && user.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('You can not do this action');
+    }
     try {
       const post = await this.findById(id);
       if (!post) {
@@ -167,16 +181,31 @@ export class PostService extends BaseService<
       const newPost = await this.update(id, updatePost);
       return newPost;
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      throw new ConflictException('Update post failed');
     }
   }
 
   async deletePost(authUser: AuthUser, id: string): Promise<BaseResponse> {
+    const user = await this.userService.findSingleBy({ id: authUser.id });
+    const post = await this.findSingleBy(
+      { id: id },
+      {
+        relations: {
+          owner: true,
+        },
+      },
+    );
+    if (!post) {
+      throw new NotFoundException('There is no post');
+    }
+    if (post.owner.id != authUser.id && user.role !== UserRole.ADMIN) {
+      throw new UnauthorizedException('You can not do this action');
+    }
     try {
       await this.deleteById(id);
       return new BaseResponse(200, 'Delete post successfully');
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      throw new ConflictException('Delete post failed');
     }
   }
 

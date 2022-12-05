@@ -149,12 +149,28 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
 
   async deleteUser(authUser: AuthUser, userId: string): Promise<any> {
     return this.verifyAndPerformAdminAction(authUser, async () => {
-      // TODO: Duoc xoa tai khoan nguoi khac nhung co the xoa mat ca ban than lam he thong khong con admin
-      await this.deleteById(userId);
-      return new BaseResponse(
-        200,
-        `Delete user with id ${userId} successfully.`,
+      // Todo: Xoa het post, xoa het poll, like, comment roi moi xoa user
+      // 1 - Xoa like, comment va vote truoc roi moi toi 2
+      // 2 - Xoa post va poll
+      const user = await this.findSingleBy(
+        { id: userId },
+        {
+          relations: {
+            createdPosts: true,
+            votedPollAnswer: true,
+          },
+        },
       );
+      try {
+        await this.deleteById(userId);
+        return new BaseResponse(
+          200,
+          `Delete user with id ${userId} successfully.`,
+        );
+      } catch (err) {
+        console.log(err.message);
+        throw new InternalServerErrorException('Delete user failed', err);
+      }
     });
   }
 
