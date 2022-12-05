@@ -37,7 +37,7 @@ export class UserPost extends BaseEntityClass {
   hashtag: string;
 
   @ManyToOne((type) => User, (user) => user.createdPosts, {
-    // onDelete: 'SET NULL',
+    onDelete: 'SET NULL',
   })
   owner: User;
 

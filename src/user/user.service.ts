@@ -152,6 +152,16 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       // Todo: Xoa het post, xoa het poll, like, comment roi moi xoa user
       // 1 - Xoa like, comment va vote truoc roi moi toi 2
       // 2 - Xoa post va poll
+      try {
+        await this.removeAllLikeOfUser(userId);
+        await this.removeAllVoteOfUser(userId);
+        await this.removeAllCommentOfUser(userId);
+      } catch (err) {
+        console.log(err.message);
+        throw new InternalServerErrorException(
+          'Can not fully delete user, please remove all post and poll first',
+        );
+      }
       const user = await this.findSingleBy(
         { id: userId },
         {
@@ -217,5 +227,53 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       return user;
     }
     throw new UnauthorizedException('Can not do this task');
+  }
+
+  private async removeAllLikeOfUser(userId: string): Promise<any> {
+    const user = await this.findSingleBy(
+      { id: userId },
+      {
+        relations: { likedPosts: true },
+      },
+    );
+    user.likedPosts = [];
+    try {
+      return await this.userRepository.save(user);
+    } catch (err) {
+      console.log(err.message);
+      throw new ConflictException('Can not delete all Like');
+    }
+  }
+
+  private async removeAllVoteOfUser(userId: string): Promise<any> {
+    const user = await this.findSingleBy(
+      { id: userId },
+      {
+        relations: { votedPollAnswer: true },
+      },
+    );
+    user.votedPollAnswer = [];
+    try {
+      return await this.userRepository.save(user);
+    } catch (err) {
+      console.log(err.message);
+      throw new ConflictException('Can not delete all Like');
+    }
+  }
+
+  private async removeAllCommentOfUser(userId: string): Promise<any> {
+    const user = await this.findSingleBy(
+      { id: userId },
+      {
+        relations: { comments: true },
+      },
+    );
+    user.comments = [];
+    try {
+      return await this.userRepository.save(user);
+    } catch (err) {
+      console.log(err.message);
+      throw new ConflictException('Can not delete all Like');
+    }
   }
 }
