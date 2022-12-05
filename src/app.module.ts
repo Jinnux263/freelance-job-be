@@ -29,10 +29,10 @@ function DatabaseOrmModule(): DynamicModule {
     entities: [User, UserPost, Poll, Comment, PostRequest, PollAnswer, Contact],
 
     url: 'mysql://f5mi33nbvpd2znp5xs2b:pscale_pw_1bD2mxJbEUH6ruTa0KsrbuBSaX2cJPvhhmBcLJqMmQn@ap-southeast.connect.psdb.cloud/myfreelancedb?ssl={"rejectUnauthorized":true}',
-    // ssl: {
-    //   rejectUnauthorized: true,
-    //   ca: process.env.SSL,
-    // },
+    ssl: {
+      rejectUnauthorized: true,
+      // ca: process.env.SSL,
+    },
 
     // host: get(process.env, 'SQL_HOST', 'ap-southeast.connect.psdb.cloud'),
     // username: 'f5mi33nbvpd2znp5xs2b',
