@@ -166,14 +166,29 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       // 2 - Xoa post va poll
       try {
         await this.removeAllLikeOfUser(userId);
-        await this.removeAllVoteOfUser(userId);
-        await this.removeAllCommentOfUser(userId);
       } catch (err) {
-        console.log(err.message);
         throw new InternalServerErrorException(
-          'Can not fully delete user, please remove all post and poll first',
+          'Can not remove all Like of user',
         );
       }
+
+      try {
+        await this.removeAllVoteOfUser(userId);
+      } catch (err) {
+        throw new InternalServerErrorException(
+          'Can not remove all Vote of user',
+        );
+      }
+
+      try {
+        await this.removeAllCommentOfUser(userId);
+      } catch (err) {
+        throw new InternalServerErrorException(
+          'Can not remove all Comment of user',
+        );
+      }
+
+      // Todo: Xoa user
       const user = await this.findSingleBy(
         { id: userId },
         {
@@ -269,10 +284,11 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       return await this.userRepository.save(user);
     } catch (err) {
       console.log(err.message);
-      throw new ConflictException('Can not delete all Like');
+      throw new ConflictException('Can not delete all Vote');
     }
   }
 
+  // Todo: Khong xoa het comment duoc
   private async removeAllCommentOfUser(userId: string): Promise<any> {
     const user = await this.findSingleBy(
       { id: userId },
@@ -285,7 +301,7 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       return await this.userRepository.save(user);
     } catch (err) {
       console.log(err.message);
-      throw new ConflictException('Can not delete all Like');
+      throw new ConflictException('Can not delete all Comment');
     }
   }
 }

@@ -31,9 +31,8 @@ export class Comment extends BaseEntityClass {
   replyComment: Comment[];
 
   @ManyToOne((type) => User, (user) => user.comments, {
-    nullable: false,
-    // onDelete: 'CASCADE',
-    // onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   owner: User;
 
