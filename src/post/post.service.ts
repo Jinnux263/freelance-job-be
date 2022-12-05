@@ -8,7 +8,7 @@ import {
 import { BaseService } from 'src/base/base.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { IdPrefix } from 'src/utils';
+import { generateUUID, IdPrefix } from 'src/utils';
 import { PostType, UserPost } from 'src/post/post.entity';
 import { PostCreation, PostRequest, PostUpdation } from 'src/post/post.dto';
 import { UserService } from 'src/user/user.service';
@@ -67,6 +67,7 @@ export class PostService extends BaseService<
 
     const newPost = new UserPost({
       ...postRequest,
+      id: generateUUID(IdPrefix.POST),
     });
 
     try {
@@ -260,10 +261,13 @@ export class PostService extends BaseService<
       post.likeUser = post.likeUser.filter((user) => {
         return userId != user.id;
       });
+      post.hashtag = JSON.stringify(post.hashtag);
       return await this.postRepository.save(post);
       // return await this.postRepository.remove(likedPost);
     } catch (err) {
-      throw new NotFoundException('There is no such post');
+      console.log(err.message);
+
+      throw new NotFoundException('Unlike failed');
     }
   }
 }

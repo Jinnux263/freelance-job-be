@@ -9,7 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthUser } from 'src/auth/auth-user.decorator';
+import { AuthUser, Public } from 'src/auth/auth-user.decorator';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -19,6 +19,7 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
+  @Public()
   @Post()
   create(@Body() createContactDto: CreateContactDto) {
     return this.contactService.createContact(createContactDto);

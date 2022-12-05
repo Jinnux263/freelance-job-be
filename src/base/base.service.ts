@@ -49,6 +49,8 @@ export class BaseService<T extends BaseEntityClass, TCreation, TQueryRequest> {
     try {
       await this.repository.update(id, req);
     } catch (error) {
+      console.log(error.message);
+
       throw new InternalServerErrorException(`Update failed`);
     }
     return req as T;

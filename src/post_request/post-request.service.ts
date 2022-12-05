@@ -132,15 +132,24 @@ export class PostRequestService extends BaseService<
     if (!updatePost.hashtag) {
       updatePost.hashtag = [];
     }
+    const newPost = new PostRequest({
+      type: PostType.PUBLIC,
+      ...updatePost,
+      hashtag: JSON.stringify(updatePost.hashtag),
+    });
+
+    const post = await this.findById(id);
+    if (!post || post.isApproved) {
+      throw new NotFoundException('There is no post');
+    }
     try {
-      const post = await this.findById(id);
-      if (!post || post.isApproved) {
-        throw new NotFoundException('There is no post');
-      }
-      const newPost = await this.update(id, updatePost);
+      await this.update(id, newPost);
+      newPost.hashtag = JSON.parse(newPost.hashtag);
       return newPost;
     } catch (err) {
-      throw new InternalServerErrorException('Internal Error');
+      console.log(err.message);
+
+      throw new InternalServerErrorException('Update post request failed');
     }
   }
 

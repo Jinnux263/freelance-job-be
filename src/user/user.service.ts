@@ -74,10 +74,11 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
         'id',
         'username',
         'avatar',
-        'organization',
         'firstName',
         'lastName',
         'role',
+        'organization',
+        'address',
         'city',
         'country',
       ]),
@@ -96,7 +97,18 @@ export class UserService extends BaseService<User, UserCreation, UserRequest> {
       const queryUser = await this.findById(userId);
       return currentUser.role === UserRole.ADMIN || currentUser.id === userId
         ? queryUser
-        : pick(currentUser, ['id', 'name', 'avatar', 'organization']);
+        : pick(currentUser, [
+            'id',
+            'username',
+            'avatar',
+            'organization',
+            'firstName',
+            'lastName',
+            'role',
+            'address',
+            'city',
+            'country',
+          ]);
     }
   }
 
